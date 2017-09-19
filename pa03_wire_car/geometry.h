@@ -140,7 +140,6 @@ public:
 };
 
 
-
 class Vector3 : public Vec3
 //
 // 3D vector

@@ -124,14 +124,12 @@ const void IrregularMesh::render(const Transform &viewTransform)
     //
     // 24 lines in instructor solution (YMMV)
     //
-
-    // debug here and check the value of vpai
     GLint vpai = ShaderProgram::getCurrentAttributeIndex("vertexPosition");
 
     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
     CHECK_GL(glEnableVertexAttribArray(vpai));
     CHECK_GL(glVertexAttribPointer(
-                 0, // index of attribute
+                 vpai, // index of attribute
                  3, // # of elements per attribute
                  GL_DOUBLE, // type of each component
                  GL_FALSE,  // don't normalized fixed-point values
@@ -175,7 +173,6 @@ const void IrregularMesh::renderTriangles(void) const
     //   "stats" on your submission with those on the official
     //   submission to check your code.
     //
-
     CHECK_GL(glDrawArrays(GL_TRIANGLES, 0, 3 * nFaces));
 
     renderStats.ctTrianglesInIrregularMeshes += nFaces;
@@ -259,6 +256,6 @@ void IrregularMesh::updateBuffers(void)
     //
     // 4 lines in instructor solution (YMMV)
     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
-    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(int) * nVertices,
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions[0]) * nVertices,
         vertexPositions, GL_STATIC_DRAW));
 }

@@ -31,6 +31,5 @@ public:
     void display(const Transform &viewTransform);
 };
 
-
 #define INCLUDED_CAR
 #endif // INCLUDED_CAR

@@ -16,6 +16,7 @@ Car::Car(void)
     :
       irregularMesh(NULL)
 {
+
     //
     // ASSIGNMENT (PA03)
     //

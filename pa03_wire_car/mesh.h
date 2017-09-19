@@ -24,7 +24,6 @@ public:
 protected:
     int nFaces;
     unsigned int vertexPositionsBufferId;
-protected:
 };
 
 

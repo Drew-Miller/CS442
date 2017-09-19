@@ -75,11 +75,11 @@ void View::init(int *argc, char **argv, string windowTitle)
     CHECK_GL(glutInitWindowSize(defaultCanvasWidth, defaultCanvasHeight));
 # endif
 #endif
-# ifdef WORK_AROUND_GLUT_GL_ERROR_BUG
+#ifdef WORK_AROUND_GLUT_GL_ERROR_BUG
     glutCreateWindow(windowTitle.c_str());
-# else
+#else
     CHECK_GL(glutCreateWindow(windowTitle.c_str()));
-# endif
+#endif
 
 #ifdef WORK_AROUND_GLUT_INIT_BUG
     //

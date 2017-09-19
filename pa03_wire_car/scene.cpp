@@ -64,5 +64,11 @@ Scene::Scene(void)
     uniformColorShaderProgram = new UniformColorShaderProgram(
             "UniformColorShaderProgram");
 
+    //
+    // ASSIGNMENT (PA03)
+    //
+    // Delete the next line (which keeps the unmodified template from
+    // crashing).
+    //
     addSceneObject(new Car());
 }

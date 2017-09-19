@@ -124,7 +124,6 @@ public:
     {
         glutSpecialFunc(onSpecialKey);
     }
-
 };
 
 extern Framework framework;

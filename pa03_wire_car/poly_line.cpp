@@ -20,16 +20,16 @@ void PolyLine::allocateBuffers(void)
 void PolyLine::updateBuffers(void)
 {
     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
-    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, nI*sizeof(vertexPositions[0]),
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, nVertices*sizeof(vertexPositions[0]),
                           vertexPositions, GL_STATIC_DRAW));
 }
 
 
-PolyLine::PolyLine(Point3 *vertexPositions_, int nI_, bool wrapI_)
-    : nI(nI_), wrapI(wrapI_)
+PolyLine::PolyLine(Point3 *vertexPositions_, int nVertices_, bool wrapI_)
+    : nVertices(nVertices_), wrapI(wrapI_)
 {
-    vertexPositions = new Point3[nI];
-    for (int i = 0; i < nI; i++)
+    vertexPositions = new Point3[nVertices];
+    for (int i = 0; i < nVertices; i++)
         vertexPositions[i] = vertexPositions_[i];
     allocateBuffers();
     updateBuffers();
@@ -49,22 +49,22 @@ const void PolyLine::render(const Transform &viewTransform)
                  BUFFER_OFFSET(0)));
     // Until we can perform the transform in the vertex shader, we'll
     // do it here.
-    Point3 *savedCoordinates = new Point3[nI];
-    for (int i = 0; i < nI; i++) {
+    Point3 *savedCoordinates = new Point3[nVertices];
+    for (int i = 0; i < nVertices; i++) {
         savedCoordinates[i] = vertexPositions[i];
         vertexPositions[i] = viewTransform * vertexPositions[i];
     }
     updateBuffers();
     // Restore the saved (untransformed) vertexPositions.
-    for (int i = 0; i < nI; i++) {
+    for (int i = 0; i < nVertices; i++) {
         vertexPositions[i] = savedCoordinates[i];
     }
     delete [] savedCoordinates;
     if (wrapI)
-        CHECK_GL(glDrawArrays(GL_LINE_LOOP, 0, nI));
+        CHECK_GL(glDrawArrays(GL_LINE_LOOP, 0, nVertices));
     else
-        CHECK_GL(glDrawArrays(GL_LINE_STRIP, 0, nI));
-    renderStats.ctLines += nI - (wrapI == 0);
+        CHECK_GL(glDrawArrays(GL_LINE_STRIP, 0, nVertices));
+    renderStats.ctLines += nVertices - (wrapI == 0);
     renderStats.ctLineStrips++;
-    renderStats.ctVertices += nI;
+    renderStats.ctVertices += nVertices;
 }

@@ -123,6 +123,5 @@ public:
 
 ostream& operator<<(ostream &out, const Mat4 mat);
 
-
 #define INCLUDED_VEC
 #endif // INCLUDED_VEC

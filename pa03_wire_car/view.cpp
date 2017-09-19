@@ -115,9 +115,9 @@ const void View::renderSupertext(double xFrac, double yFrac,
     CHECK_GL(glMatrixMode(GL_PROJECTION));
 
 	CHECK_GL(glMatrixMode(GL_MODELVIEW));
-#ifdef WORK_AROUND_GLUT_CHARS_NEED_FLUSH_BUG
+# ifdef WORK_AROUND_GLUT_CHARS_NEED_FLUSH_BUG
     framework.flushText();
-#endif
+# endif
 }
 
 
@@ -148,3 +148,4 @@ void View::setFullScreen(bool makeItFull)
     } else
         framework.reshapeWindow(savedCanvasWidth, savedCanvasHeight);
 }
+

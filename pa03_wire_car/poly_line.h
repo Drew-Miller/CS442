@@ -24,7 +24,7 @@ class PolyLine : public Tessellation
 public:
     Point3 *vertexPositions;
     unsigned int vertexPositionsBufferId;
-    int nI; // number of vertices
+    int nVertices;
     //
     // A convention we will follow for polylines (and beyond) is that
     // it is up to the programmer to make sure that no two points
