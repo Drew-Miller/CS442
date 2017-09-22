@@ -259,6 +259,6 @@ void IrregularMesh::updateBuffers(void)
     //
     // 4 lines in instructor solution (YMMV)
     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
-    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(int) * nVertices,
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions[0]) * nVertices,
         vertexPositions, GL_STATIC_DRAW));
 }
