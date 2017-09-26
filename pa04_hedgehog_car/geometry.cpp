@@ -32,11 +32,13 @@ Vector3 faceNormal(const Point3 &p0, const Point3 &p1, const Point3 &p2)
     n.u.a[1] = (v.u.a[2] * w.u.a[0]) - (v.u.a[0] * w.u.a[2]);
     n.u.a[2] = (v.u.a[0] * w.u.a[1]) - (v.u.a[1] * w.u.a[0]);
 
+    /*
     double magnitude = sqrt(n.u.a[0] * n.u.a[0] + n.u.a[1] * n.u.a[1] + n.u.a[2] * n.u.a[2]);
 
     n.u.a[0] = n.u.a[0] / magnitude;
     n.u.a[1] = n.u.a[1] / magnitude;
     n.u.a[2] = n.u.a[2] / magnitude;
+    */
 
     return n; // permits template to compile cleanly
 }

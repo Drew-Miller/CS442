@@ -68,8 +68,7 @@ Scene::Scene(void)
     // Delete the next line (which keeps the unmodified template from
     // crashing).
     //
-    uniformColorShaderProgram = NULL;
+    // uniformColorShaderProgram = NULL;
 
     addSceneObject(new Car());
 }
-
