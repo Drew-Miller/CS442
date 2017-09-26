@@ -23,7 +23,16 @@ Vector3 faceNormal(const Point3 &p0, const Point3 &p1, const Point3 &p2)
     //
     // 5 lines in instructor solution (YMMV)
     //
-    return Vector3(); // permits template to compile cleanly
+    Point3 v(p1.u.a[0] - p0.u.a[0], p1.u.a[1] - p0.u.a[1], p1.u.a[2] - p0.u.a[2]);
+    Point3 w(p2.u.a[0] - p1.u.a[0], p2.u.a[1] - p0.u.a[1], p2.u.a[2] - p0.u.a[2]);
+
+    Vector3 n;
+
+    n.u.a[0] = (v.u.a[1] * w.u.a[2]) - (v.u.a[2] * w.u.a[1]);
+    n.u.a[1] = (v.u.a[2] * w.u.a[0]) - (v.u.a[0] * w.u.a[2]);
+    n.u.a[2] = (v.u.a[0] * w.u.a[1]) - (v.u.a[1] * w.u.a[0]);
+
+    return n; // permits template to compile cleanly
 }
 
 
@@ -157,4 +166,3 @@ vector<Point3> readPoint3s(string fname)
     }
     return result;
 }
-

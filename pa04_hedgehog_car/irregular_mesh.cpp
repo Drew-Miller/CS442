@@ -60,6 +60,7 @@ void IrregularMesh::allocateBuffers(void)
     //
     // Copy your previous (PA03) solution here.
     //
+    CHECK_GL(glGenBuffers(1, &vertexPositionsBufferId));
 }
 
 
@@ -107,6 +108,19 @@ const void IrregularMesh::render(void)
     //
     // 12 lines in instructor solution (YMMV)
     //
+    GLint vpai = ShaderProgram::getCurrentAttributeIndex("vertexPosition");
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
+    CHECK_GL(glEnableVertexAttribArray(vpai));
+    CHECK_GL(glVertexAttribPointer(
+                 0, // index of attribute
+                 3, // # of elements per attribute
+                 GL_DOUBLE, // type of each component
+                 GL_FALSE,  // don't normalized fixed-point values
+                 0, // offset between consecutive generic vertex attributes
+                 BUFFER_OFFSET(0)));
+
+    renderTriangles();
 }
 
 
@@ -115,6 +129,10 @@ const void IrregularMesh::renderTriangles(void) const
     //
     // Copy your previous (PA03) solution here.
     //
+    CHECK_GL(glDrawArrays(GL_TRIANGLES, 0, 3 * nFaces));
+
+    renderStats.ctTrianglesInIrregularMeshes += nFaces;
+    renderStats.ctVertices += (3 * nFaces);
 }
 
 
@@ -211,4 +229,7 @@ void IrregularMesh::updateBuffers(void)
     //
     // Copy your previous (PA03) solution here.
     //
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions[0]) * nVertices,
+        vertexPositions, GL_STATIC_DRAW));
 }

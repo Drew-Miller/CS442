@@ -441,6 +441,15 @@ UniformColorShaderProgram::UniformColorShaderProgram(string name)
     //
     // Copy your previous (PA02) solution here.
     //
+    char *fileContents;
+
+    fileContents = readFile("uniform_color_vertex_shader.glsl");
+    compileVertexShader(fileContents);
+    free(fileContents);
+
+    fileContents = readFile("passthru_fragment_shader.glsl");
+    compileFragmentShader(fileContents);
+    free(fileContents);
 }
 
 
@@ -455,5 +464,3 @@ const void UniformColorShaderProgram::start(void) const
     setUniform("color", color);
     setUniform("viewMatrix", viewMatrix, 4);
 }
-
-
