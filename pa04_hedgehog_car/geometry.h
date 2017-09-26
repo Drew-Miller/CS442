@@ -293,8 +293,16 @@ public:
 
     const Vector3 cross(const Vector3 &other) const
     {
+        double a1 = u.a[0];
+        double a2 = u.a[1];
+        double a3 = u.a[2];
+
+        double b1 = other.u.a[0];
+        double b2 = other.u.a[1];
+        double b3 = other.u.a[2];
+
         // replace the following (which permits the template to compile cleanly)
-        return Vector3(0, 0, 1);
+        return Vector3(a2*b3 - a3*b2, a3*b1 - a1*b3, a1*b2 - a2*b1);
     };
 };
 
