@@ -20,6 +20,7 @@ Car::Car(void)
     //
     // Copy your previous (PA03) solution here.
     //
+    irregularMesh = IrregularMesh::read(carFname.c_str());
 
     // Since the car's IrregularMesh doesn't need to be tessellated
     // (effectively), we can create the hedgehogs immediately.
@@ -53,4 +54,3 @@ void Car::display(const Transform &viewTransform)
     }
 
 }
-

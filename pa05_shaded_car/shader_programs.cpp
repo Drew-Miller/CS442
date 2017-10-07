@@ -445,6 +445,15 @@ UniformColorShaderProgram::UniformColorShaderProgram(string name)
     //
     // Copy your previous (PA02) solution here.
     //
+    char *fileContents;
+
+    fileContents = readFile("uniform_color_vertex_shader.glsl");
+    compileVertexShader(fileContents);
+    free(fileContents);
+
+    fileContents = readFile("passthru_fragment_shader.glsl");
+    compileFragmentShader(fileContents);
+    free(fileContents);
 }
 
 
@@ -478,6 +487,15 @@ EadsShaderProgram::EadsShaderProgram(void)
     // fragment shader source, "passthru_fragment_shader.glsl", should
     // still be used.)
     //
+    char *fileContents;
+
+    fileContents = readFile("eads_vertex_shader.glsl");
+    compileVertexShader(fileContents);
+    free(fileContents);
+
+    fileContents = readFile("passthru_fragment_shader.glsl");
+    compileFragmentShader(fileContents);
+    free(fileContents);
 }
 
 
@@ -515,5 +533,3 @@ const void EadsShaderProgram::start(void) const
     setUniform("irradiance", scene->lights[0]->irradiance);
     setUniform("towardsLight", scene->lights[0]->towards());
 }
-
-

@@ -103,6 +103,55 @@ void main(void)
     //   as the color to be interpolated and sent to the pixel shader.
     //
 
+
+    
+	// Initialize radiance
+	vec3 radiance = emittance;
+
+	// Initialize reflectivity
+	vec3 reflectivity = ambientReflectivity;
+
+	// Transform the normal matrix by the vertex normal
+	vec3 worldNormal_ = normalMatrix * vertexNormal;
+	vec3 worldNormal = normalize(worldNormal_);
+
+	// Normalize towardsLight
+	vec3 towardsLight_ = normalize(towardsLight);
+
+	// Compute the dot product
+	float nDotL = dot(worldNormal, towardsLight_);
+
+	// If the light source is above the horizon
+	if (nDotL > 0.0)
+	{
+		// Add the diffuse component
+		vec3 diffuseProduct = nDotL * maximumDiffuseReflectivity;
+		reflectivity = reflectivity + diffuseProduct;
+
+		// Compute the half vector
+		vec3 h_ = towardsCamera + towardsLight_;
+		vec3 h = normalize(h_);
+
+		// Compute the dot product
+		float nDotH = dot(worldNormal, h);
+
+		// If the light source makes a significant contribution
+		if (nDotH > 0.0)
+		{
+			// Modify reflectivity
+			float power = pow(nDotH, specularExponent);
+			vec3 reflectivityProduct = maximumSpecularReflectivity * power;
+
+			reflectivity = reflectivity + reflectivityProduct;
+		}
+	}
+
+
+	// Compute the final radiance
+	vec3 finalProduct = irradiance * reflectivity;
+
+
+
     interpolatedColor = vec4(radiance, 1);
 #if 0 // debug
     interpolatedColor = vec4(vertexNormal, 1);
