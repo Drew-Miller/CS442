@@ -103,54 +103,29 @@ void main(void)
     //   as the color to be interpolated and sent to the pixel shader.
     //
 
+    vec3 radiance = emittance;
+    vec3 reflectivity = ambientReflectivity;
 
-    
-	// Initialize radiance
-	vec3 radiance = emittance;
+    // get the normal vec for the world and the light s.t. we can determine
+    // the camera vec
+    vec3 worldNormal = normalize(vertexNormal * normalMatrix);
+    vec3 towardsLight_ = normalize(towardsLight);
 
-	// Initialize reflectivity
-	vec3 reflectivity = ambientReflectivity;
+    float nDotL = dot(worldNormal, towardsLight_);
 
-	// Transform the normal matrix by the vertex normal
-	vec3 worldNormal_ = normalMatrix * vertexNormal;
-	vec3 worldNormal = normalize(worldNormal_);
+    if(nDotL > 0.0){
+      reflectivity = reflectivity + (nDotL * maximumDiffuseReflectivity);
 
-	// Normalize towardsLight
-	vec3 towardsLight_ = normalize(towardsLight);
+      vec3 h = normalize(towardsCamera + towardsLight_);
 
-	// Compute the dot product
-	float nDotL = dot(worldNormal, towardsLight_);
+      float nDotH = dot(worldNormal, h);
 
-	// If the light source is above the horizon
-	if (nDotL > 0.0)
-	{
-		// Add the diffuse component
-		vec3 diffuseProduct = nDotL * maximumDiffuseReflectivity;
-		reflectivity = reflectivity + diffuseProduct;
+      if(nDotH > 0.0){
+        reflectivity = reflectivity + maximumSpecularReflectivity + pow(nDotH, specularExponent);
+      }
+    }
 
-		// Compute the half vector
-		vec3 h_ = towardsCamera + towardsLight_;
-		vec3 h = normalize(h_);
-
-		// Compute the dot product
-		float nDotH = dot(worldNormal, h);
-
-		// If the light source makes a significant contribution
-		if (nDotH > 0.0)
-		{
-			// Modify reflectivity
-			float power = pow(nDotH, specularExponent);
-			vec3 reflectivityProduct = maximumSpecularReflectivity * power;
-
-			reflectivity = reflectivity + reflectivityProduct;
-		}
-	}
-
-
-	// Compute the final radiance
-	vec3 finalProduct = irradiance * reflectivity;
-
-
+    radiance = irradiance * reflectivity + radiance;
 
     interpolatedColor = vec4(radiance, 1);
 #if 0 // debug

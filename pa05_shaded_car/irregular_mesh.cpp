@@ -149,15 +149,18 @@ const void IrregularMesh::render(void)
 
      GLint vnai = ShaderProgram::getCurrentAttributeIndex("vertexNormal");
 
-     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
-     CHECK_GL(glEnableVertexAttribArray(vnai));
-     CHECK_GL(glVertexAttribPointer(
-                  vnai, // index of attribute
-                  3, // # of elements per attribute
-                  GL_DOUBLE, // type of each component
-                  GL_FALSE,  // don't normalized fixed-point values
-                  0, // offset between consecutive generic vertex attributes
-                  BUFFER_OFFSET(0)));
+     // if(vnai != NO_SUCH_ATTRIBUTE){
+
+       CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+       CHECK_GL(glEnableVertexAttribArray(vnai));
+       CHECK_GL(glVertexAttribPointer(
+                    vnai, // index of attribute
+                    3, // # of elements per attribute
+                    GL_DOUBLE, // type of each component
+                    GL_FALSE,  // don't normalized fixed-point values
+                    0, // offset between consecutive generic vertex attributes
+                    BUFFER_OFFSET(0)));
+      // }
 
 
     renderTriangles();
@@ -299,10 +302,10 @@ void IrregularMesh::updateBuffers(void)
     CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions[0]) * nVertices,
         vertexPositions, GL_STATIC_DRAW));
 
-    CHECK_GL(glBindBugger(GL_ARRAY_BUFFER, vertextNormalBufferID));
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
     CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexNormals[0]) * nVertices,
-        vertexNormals, GL)_STATIC_DRAW));
+        vertexNormals, GL_STATIC_DRAW));
 
-        // create the faceNormalOfVertex loop
-    Vector3 faceNormalOfVertex[] = new Vector3[]
+    // create the faceNormalOfVertex loop
+    // Vector3 faceNormalOfVertex[] = new Vector3[]
 }
