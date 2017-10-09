@@ -134,8 +134,6 @@ const void IrregularMesh::render(void)
     //   The logical place to do these steps is right after you set up
     //   the vertex positions.
     //
-
-    // vertex positions
     GLint vpai = ShaderProgram::getCurrentAttributeIndex("vertexPosition");
 
     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
@@ -149,29 +147,22 @@ const void IrregularMesh::render(void)
                  BUFFER_OFFSET(0)));
 
 
+      /*
       // face/vertex normals
      GLint vnai = ShaderProgram::getCurrentAttributeIndex("vertexNormal");
 
-     if(vnai != NO_SUCH_ATTRIBUTE){
-       // check if to use vertex or face normals
-       if(controller.useVertexNormals){
-         CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
-        }
-        else{
-          CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, faceNormalBufferId));
-      }
+     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+     CHECK_GL(glEnableVertexAttribArray(vnai));
+     CHECK_GL(glVertexAttribPointer(
+                  vnai, // index of attribute
+                  3, // # of elements per attribute
+                  GL_DOUBLE, // type of each component
+                  GL_FALSE,  // don't normalized fixed-point values
+                  0, // offset between consecutive generic vertex attributes
+                  BUFFER_OFFSET(0)));
+                  &=*/
 
-      CHECK_GL(glEnableVertexAttribArray(vnai));
-      CHECK_GL(glVertexAttribPointer(
-                   vnai, // index of attribute
-                   3, // # of elements per attribute
-                   GL_DOUBLE, // type of each component
-                   GL_FALSE,  // don't normalized fixed-point values
-                   0, // offset between consecutive generic vertex attributes
-                   BUFFER_OFFSET(0)));
-    }
-
-    renderTriangles();
+     renderTriangles();
 }
 
 
@@ -313,18 +304,4 @@ void IrregularMesh::updateBuffers(void)
     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
     CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexNormals[0]) * nVertices,
         vertexNormals, GL_STATIC_DRAW));
-
-
-    // BIND the face Normal vector to the vertices of the faces
-    Vec3 *faceNormalOfVertex = new Vec3[nVertices];
-
-    for (int iFace = 0; iFace < nVertices; iFace++) {
-          faceNormalOfVertex[iFace] = faceNormals[iFace / 3];
-    }
-
-    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, faceNormalBufferId));
-    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(faceNormalOfVertex[0]) * nVertices,
-        faceNormalOfVertex, GL_STATIC_DRAW));
-
-    delete faceNormalOfVertex;
 }
