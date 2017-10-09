@@ -322,24 +322,16 @@ void IrregularMesh::updateBuffers(void)
     CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexNormals[0]) * nVertices,
         vertexNormals, GL_STATIC_DRAW));
 
-    // create the array of nVertices
+    // BIND the face Normal vector to the vertices of the faces
     Vec3 *faceNormalOfVertex = new Vec3[nVertices];
 
-    // loop through and get all of the vertices from
-    for(int iFace = 0; iFace < nVertices; iFace++){
-      savedPositions[i] = vertexPositions[i];
-      //transform the vertices
-      vertexPositions[i] = viewTransform * vertexPositions[i];
+    for (int iFace = 0; iFace < nVertices; iFace++) {
+          faceNormalOfVertex[iFace] = faceNormals[iFace / 3];
     }
 
-    updateBuffers();
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, faceNormalBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(faceNormalOfVertex[0]) * nVertices,
+        faceNormalOfVertex, GL_STATIC_DRAW));
 
-    // copy saved positions back to vertexpositions
-    for(int i = 0; i < nVertices; i++){
-      vertexPositions[i] = savedPositions[i];
-    }
-
-    delete[] savedPositions;
-
-    renderTriangles();
+    delete faceNormalOfVertex;
 }
