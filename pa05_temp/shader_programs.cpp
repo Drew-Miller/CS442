@@ -489,7 +489,7 @@ EadsShaderProgram::EadsShaderProgram(void)
     //
     char *fileContents;
 
-    fileContents = readFile("uniform_color_vertex_shader.glsl");
+    fileContents = readFile("eads_vertex_shader.glsl");
     compileVertexShader(fileContents);
     free(fileContents);
 

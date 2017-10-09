@@ -128,7 +128,7 @@ void main(void)
     radiance = irradiance * reflectivity + radiance;
 
     interpolatedColor = vec4(radiance, 1);
-    
+
 #if 0 // debug
     interpolatedColor = vec4(vertexNormal, 1);
 #endif

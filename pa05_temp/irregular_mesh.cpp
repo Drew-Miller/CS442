@@ -7,6 +7,7 @@
 #include "obj_io.h"
 #include "render_stats.h"
 #include "shader_programs.h"
+#include <stdio.h>
 
 
 // helper (could be static)
@@ -147,22 +148,22 @@ const void IrregularMesh::render(void)
                  BUFFER_OFFSET(0)));
 
 
-      /*
       // face/vertex normals
      GLint vnai = ShaderProgram::getCurrentAttributeIndex("vertexNormal");
 
-     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
-     CHECK_GL(glEnableVertexAttribArray(vnai));
-     CHECK_GL(glVertexAttribPointer(
-                  vnai, // index of attribute
-                  3, // # of elements per attribute
-                  GL_DOUBLE, // type of each component
-                  GL_FALSE,  // don't normalized fixed-point values
-                  0, // offset between consecutive generic vertex attributes
-                  BUFFER_OFFSET(0)));
-                  &=*/
+     if(vnai != NO_SUCH_ATTRIBUTE){
+       CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+       CHECK_GL(glEnableVertexAttribArray(vnai));
+       CHECK_GL(glVertexAttribPointer(
+                    vnai, // index of attribute
+                    3, // # of elements per attribute
+                    GL_DOUBLE, // type of each component
+                    GL_FALSE,  // don't normalized fixed-point values
+                    0, // offset between consecutive generic vertex attributes
+                    BUFFER_OFFSET(0)));
+    }
 
-     renderTriangles();
+    renderTriangles();
 }
 
 
