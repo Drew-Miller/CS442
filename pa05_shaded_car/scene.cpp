@@ -78,12 +78,8 @@ Scene::Scene(void)
     // Delete the next two lines (which keep the unmodified template
     // from crashing).
     //
-    uniformColorShaderProgram = NULL;
-    eadsShaderProgram = NULL;
-
     coordinateAxes = new CoordinateAxes();
 
     addLight(new Light(whiteColor, Vector3(-1, -1, -1)));
     addSceneObject(new Car());
 }
-

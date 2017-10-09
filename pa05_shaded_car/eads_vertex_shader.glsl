@@ -103,6 +103,30 @@ void main(void)
     //   as the color to be interpolated and sent to the pixel shader.
     //
 
+    vec3 radiance = emittance;
+    vec3 reflectivity = ambientReflectivity;
+
+    // get the normal vec for the world and the light s.t. we can determine
+    // the camera vec
+    vec3 worldNormal = normalize(vertexNormal * normalMatrix);
+    vec3 towardsLight_ = normalize(towardsLight);
+
+    float nDotL = dot(worldNormal, towardsLight_);
+
+    if(nDotL > 0.0){
+      reflectivity = reflectivity + (nDotL * maximumDiffuseReflectivity);
+
+      vec3 h = normalize(towardsCamera + towardsLight_);
+
+      float nDotH = dot(worldNormal, h);
+
+      if(nDotH > 0.0){
+        reflectivity = reflectivity + maximumSpecularReflectivity + pow(nDotH, specularExponent);
+      }
+    }
+
+    radiance = irradiance * reflectivity + radiance;
+
     interpolatedColor = vec4(radiance, 1);
 #if 0 // debug
     interpolatedColor = vec4(vertexNormal, 1);
