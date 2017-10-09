@@ -152,7 +152,7 @@ const void IrregularMesh::render(void)
      GLint vnai = ShaderProgram::getCurrentAttributeIndex("vertexNormal");
 
      if(vnai != NO_SUCH_ATTRIBUTE){
-       CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+       CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, faceNormalBufferId));
        CHECK_GL(glEnableVertexAttribArray(vnai));
        CHECK_GL(glVertexAttribPointer(
                     vnai, // index of attribute
