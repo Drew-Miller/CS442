@@ -114,20 +114,21 @@ void main(void)
     float nDotL = dot(worldNormal, towardsLight_);
 
     if(nDotL > 0.0){
-      reflectivity = reflectivity + (nDotL * maximumDiffuseReflectivity);
+      reflectivity += (nDotL * maximumDiffuseReflectivity);
 
       vec3 h = normalize(towardsCamera + towardsLight_);
 
       float nDotH = dot(worldNormal, h);
 
       if(nDotH > 0.0){
-        reflectivity = reflectivity + maximumSpecularReflectivity + pow(nDotH, specularExponent);
+        reflectivity += (maximumSpecularReflectivity * pow(nDotH, specularExponent));
       }
     }
 
-    radiance = irradiance * reflectivity + radiance;
+    radiance += (irradiance * reflectivity);
 
     interpolatedColor = vec4(radiance, 1);
+
 #if 0 // debug
     interpolatedColor = vec4(vertexNormal, 1);
 #endif

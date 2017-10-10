@@ -20,9 +20,8 @@ Vector3 faceNormal(const Point3 &p0, const Point3 &p1, const Point3 &p2)
     Vector3 v = p1 - p0;
     Vector3 w = p2 - p0;
 
-    return v.cross(w); // permits template to compile cleanly
+    return v.cross(w); // permits template to compile cleanly}
 }
-
 
 const Matrix4 Matrix4::operator*(const Matrix4 &matrix) const
 {
