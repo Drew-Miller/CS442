@@ -152,7 +152,13 @@ const void IrregularMesh::render(void)
      GLint vnai = ShaderProgram::getCurrentAttributeIndex("vertexNormal");
 
      if(vnai != NO_SUCH_ATTRIBUTE){
-       CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, faceNormalBufferId));
+       if(controller.useVertexNormals){
+         CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+       }
+       else{
+         CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, faceNormalBufferId));
+       }
+
        CHECK_GL(glEnableVertexAttribArray(vnai));
        CHECK_GL(glVertexAttribPointer(
                     vnai, // index of attribute
@@ -305,4 +311,20 @@ void IrregularMesh::updateBuffers(void)
     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
     CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexNormals[0]) * nVertices,
         vertexNormals, GL_STATIC_DRAW));
+
+
+    // BIND the face Normal vector to the vertices of the faces
+    Vec3 *faceNormalOfVertex = new Vec3[nVertices];
+
+    for (int iFace = 0; iFace < nFaces; iFace++) {
+          faceNormalOfVertex[iFace * 3 + 0] = faceNormals[iFace];
+          faceNormalOfVertex[iFace * 3 + 1] = faceNormals[iFace];
+          faceNormalOfVertex[iFace * 3 + 2] = faceNormals[iFace];
+    }
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, faceNormalBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(faceNormalOfVertex[0]) * nVertices,
+    faceNormalOfVertex, GL_STATIC_DRAW));
+
+    delete faceNormalOfVertex;
 }
