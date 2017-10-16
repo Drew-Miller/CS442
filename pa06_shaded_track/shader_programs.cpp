@@ -445,6 +445,15 @@ UniformColorShaderProgram::UniformColorShaderProgram(string name)
     //
     // Copy your previous (PA02) solution here.
     //
+    char *fileContents;
+
+    fileContents = readFile("uniform_color_vertex_shader.glsl");
+    compileVertexShader(fileContents);
+    free(fileContents);
+
+    fileContents = readFile("passthru_fragment_shader.glsl");
+    compileFragmentShader(fileContents);
+    free(fileContents);
 }
 
 
@@ -472,6 +481,15 @@ EadsShaderProgram::EadsShaderProgram(void)
     //
     // Copy your previous (PA05) solution here.
     //
+    char *fileContents;
+
+    fileContents = readFile("eads_vertex_shader.glsl");
+    compileVertexShader(fileContents);
+    free(fileContents);
+
+    fileContents = readFile("passthru_fragment_shader.glsl");
+    compileFragmentShader(fileContents);
+    free(fileContents);
 }
 
 
@@ -517,6 +535,21 @@ const void EadsShaderProgram::start(void) const
     // Suggestion: Assert that there are no more than 10 lights (see
     // the shader source).
     //
+    int nLights = scene->lights.size();
+    assert(nLights <= 10);
+
+    // set nLights
+    setUniform("nLights", nLights);
+
+    for(int i = 0; i < nLights; i++){
+      string indices[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+
+      // create variable names for setting values
+      string irradianceVar = "light[" + indices[i] + "].irradiance";
+      string towardsVar = "light[" + indices[i] + "].towards";
+
+      // set the components of each light
+      setUniform(irradianceVar, scene->lights[i]->irradiance);
+      setUniform(towardsVar, scene->lights[i]->towards());
+    }
 }
-
-

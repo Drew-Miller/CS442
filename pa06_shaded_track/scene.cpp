@@ -74,15 +74,6 @@ Scene::Scene(void)
             "UniformColorShaderProgram");
     eadsShaderProgram = new EadsShaderProgram();
 
-    //
-    // ASSIGNMENT (PA06)
-    //
-    // Delete the next two lines (which keep the unmodified template
-    // from crashing).
-    //
-    uniformColorShaderProgram = NULL;
-    eadsShaderProgram = NULL;
-
     coordinateAxes = new CoordinateAxes();
 
     //
@@ -105,5 +96,12 @@ Scene::Scene(void)
     //
     // 4 lines in instructor solution (YMMV)
     //
-}
 
+    // Light 1
+    addLight(new Light(whiteColor, Vector3(0, 0, -1)));
+
+    // Light 2
+    addLight(new Light(.50 * whiteColor, Vector3(0, 1, 0)));
+
+    addSceneObject(new Track());
+}

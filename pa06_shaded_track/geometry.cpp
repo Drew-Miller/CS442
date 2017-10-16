@@ -14,10 +14,10 @@ using namespace std;
 
 Vector3 faceNormal(const Point3 &p0, const Point3 &p1, const Point3 &p2)
 {
-    //
-    // Copy your previous (PA04) solution here.
-    //
-    return Vector3(); // permits template to compile cleanly
+  Vector3 v = p1 - p0;
+  Vector3 w = p2 - p0;
+
+  return v.cross(w);
 }
 
 
@@ -151,4 +151,3 @@ vector<Point3> readPoint3s(string fname)
     }
     return result;
 }
-

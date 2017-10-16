@@ -29,6 +29,12 @@ void Tube::draw(SceneObject *sceneObject)
     //
     // 4 lines in instructor solution (YMMV)
     //
+    if(!tessellationMesh){
+      tessellate();
+      sceneObject->addHedgehogs(tessellationMesh);
+    }
+
+    tessellationMesh->render();
 }
 
 
@@ -62,5 +68,40 @@ void Tube::tessellate(void)
     //
     // 16 lines in instructor solution (YMMV)
     //
-}
+    Point3 *vertexPositions = new Point3[nJ * nI];
+    Vector3 *vertexNormals = new Vector3[nJ * nI];
 
+    for(int i = 0; i < nI; i++){
+      double u = 0.0;
+
+      for(int j = 0; j < nJ; j++){
+        Point3 p;
+        Vector3 vU, vV, vW;
+
+        double theta = 2 * M_PI * i / nI;
+
+        curve->coordinateFrame(u, p, vU, vV, vW);
+
+        // Vertex Position
+        // Get the point along the edge of the line
+        // Q = P + R*cos(theta)*U + R*sin(theta)*V
+        Point3 q = p + radius * cos(theta) * vU + radius * sin(theta) * vV;
+        // get the vertex normal
+        Vector3 n = q - p;
+
+        vertexPositions[j * nI + i] = q;
+        vertexNormals[j * nI + i] = n;
+
+        // increment u
+        if(isClosed)
+          u += 1.0 / nJ;
+        else
+          u += 1.0 / (nJ - 1.0);
+      }
+    }
+
+    tessellationMesh = new RegularMesh(vertexPositions, vertexNormals, nI, nJ, true, false);
+
+    delete[] vertexPositions;
+    delete[] vertexNormals;
+}

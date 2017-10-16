@@ -29,6 +29,16 @@ const void Curve::coordinateFrame(const double u,
     //
     // 8 lines in instructor solution (YMMV)
     //
+
+    // get dp_du from the constructor
+    Vector3 tangent;
+    // set the point from on the curve
+    p = (*this)(u, &tangent);
+
+    // get vW and normalize it
+    vW = tangent.normalized();
+    vU = (tangent.cross(vNeverParallel)).normalized();
+    vV = vU.cross(vW).normalized();
 }
 
 
@@ -80,6 +90,23 @@ const Point3 TrigonometricCurve::operator()(const double u,
     //
     // 10 lines in instructor solution (YMMV)
     //
-    return Point3(); // replace (permits template to compile cleanly)
-}
 
+    // Old Solution in action
+    Vec3 a = 2 * M_PI * (freq * u + phase);
+
+    // Null Check
+    if(dp_du){
+      // Derivative: p = x * cos(2 * PI * (frequency * u + phase));
+      //            dp/du = x * 2 * PI * frequency * -sin(2 * PI (frequency * u + phase));
+      //            substitute variables as needed for x,y,z
+      dp_du->u.g.x = mag.u.g.x * (-sin(a.u.g.x)) * freq.u.g.x * 2 * M_PI;
+      dp_du->u.g.y = mag.u.g.y * (-sin(a.u.g.y)) * freq.u.g.y * 2 * M_PI;
+      dp_du->u.g.z = mag.u.g.z * (-sin(a.u.g.z)) * freq.u.g.z * 2 * M_PI;
+    }
+
+    double x = mag.u.g.x * cos(a.u.g.x) + offset.u.g.x;
+    double y = mag.u.g.y * cos(a.u.g.y) + offset.u.g.y;
+    double z = mag.u.g.z * cos(a.u.g.z) + offset.u.g.z;
+
+    return Point3(x, y, z);
+}
