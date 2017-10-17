@@ -268,6 +268,7 @@ const void RegularMesh::renderTriangleStrip(const int j) const
 
     // the total amount of triangle indices in the i direction
     int nIndicesInStrip = (nI + wrapI) * 2;
+    // byte offset from the start of the glElementArray
     int byteOffset = j * (sizeof(vertexIndices[0]) * nIndicesInStrip);
 
     CHECK_GL(glDrawElements(GL_TRIANGLE_STRIP, nIndicesInStrip, GL_UNSIGNED_INT, BUFFER_OFFSET(byteOffset)));
@@ -393,8 +394,7 @@ const void RegularMesh::createFaceNormalsAndCentroids(void)
           faceNormals[ulIndex] = faceNormal(p[0], p[2], p[3]);
           faceNormals[lrIndex] = faceNormal(p[0], p[1], p[2]);
 
-
-          // delete the poitn we allocated
+          // delete the points we allocated for quadboundary
           delete[] p;
       }
     }

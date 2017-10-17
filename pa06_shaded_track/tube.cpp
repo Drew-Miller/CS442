@@ -82,9 +82,11 @@ void Tube::tessellate(void)
         curve->coordinateFrame(u, p, vU, vV, vW);
 
         // Vertex Position
-        // Get the point along the edge of the line
-        // Q = P + R*cos(theta)*U + R*sin(theta)*V
+        // Get the point along the edge of the tube
+        // Q = P + R*cos(theta)*U + R*sin(theta)*V\
+        // where p is the center of the tube
         Point3 q = p + radius * cos(theta) * vU + radius * sin(theta) * vV;
+
         // get the vertex normal
         Vector3 n = q - p;
 

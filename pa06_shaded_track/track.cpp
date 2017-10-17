@@ -288,6 +288,7 @@ Track::Track(void) : SceneObject()
     OffsetCurve *rightRailCurve = new OffsetCurve( guideCurve, rightOffset, neverParallel );
 
     leftRailTube = new Tube(leftRailCurve, radius, nTheta, nRailSegments, true);
+    // the rightRailTube wasn't asked for in the instructions, but through gdb debugging it seems it cannot be null
     rightRailTube = new Tube(rightRailCurve, radius, nTheta, nRailSegments, true);
 
 

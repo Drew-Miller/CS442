@@ -37,7 +37,7 @@ const void Curve::coordinateFrame(const double u,
 
     // get vW and normalize it
     vW = tangent.normalized();
-    vU = (tangent.cross(vNeverParallel)).normalized();
+    vU = tangent.cross(vNeverParallel).normalized();
     vV = vU.cross(vW).normalized();
 }
 
@@ -97,11 +97,15 @@ const Point3 TrigonometricCurve::operator()(const double u,
     // Null Check
     if(dp_du){
       // Derivative: p = x * cos(2 * PI * (frequency * u + phase));
-      //            dp/du = x * 2 * PI * frequency * -sin(2 * PI (frequency * u + phase));
+      //            dp/du = x * 2 * PI * frequency * -sin(2 * PI * (frequency * u + phase));
+      //         OR dp/du = x * 2 * PI * frequency * -sin(a.u.g.x), a = 2 * PI * (frequency * u + phase)
       //            substitute variables as needed for x,y,z
-      dp_du->u.g.x = mag.u.g.x * (-sin(a.u.g.x)) * freq.u.g.x * 2 * M_PI;
-      dp_du->u.g.y = mag.u.g.y * (-sin(a.u.g.y)) * freq.u.g.y * 2 * M_PI;
-      dp_du->u.g.z = mag.u.g.z * (-sin(a.u.g.z)) * freq.u.g.z * 2 * M_PI;
+
+      Vec3 iSin(-sin(a.u.g.x), -sin(a.u.g.y), -sin(a.u.g.z));
+
+      dp_du->u.g.x = mag.u.g.x * iSin.u.g.x * freq.u.g.x * 2 * M_PI;
+      dp_du->u.g.y = mag.u.g.y * iSin.u.g.y * freq.u.g.y * 2 * M_PI;
+      dp_du->u.g.z = mag.u.g.z * iSin.u.g.z * freq.u.g.z * 2 * M_PI;
     }
 
     double x = mag.u.g.x * cos(a.u.g.x) + offset.u.g.x;
