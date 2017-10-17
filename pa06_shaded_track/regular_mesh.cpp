@@ -267,7 +267,7 @@ const void RegularMesh::renderTriangleStrip(const int j) const
     //
 
     // the total amount of triangle indices in the i direction
-    int nIndicesInStrip = (nI + wrapI - 1) * 2;
+    int nIndicesInStrip = (nI + wrapI) * 2;
     int byteOffset = j * (sizeof(vertexIndices[0]) * nIndicesInStrip);
 
     CHECK_GL(glDrawElements(GL_TRIANGLE_STRIP, nIndicesInStrip, GL_UNSIGNED_INT, BUFFER_OFFSET(byteOffset)));
