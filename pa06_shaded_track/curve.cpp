@@ -32,7 +32,7 @@ const void Curve::coordinateFrame(const double u,
 
     // get dp_du from the constructor
     Vector3 tangent;
-    // set the point from on the curve
+    // get the point and the tangent vector from the curve
     p = (*this)(u, &tangent);
 
     // get vW and normalize it

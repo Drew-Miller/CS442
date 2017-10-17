@@ -46,7 +46,15 @@ class RegularMesh : public Mesh
         //
         // 1 lines in instructor solution (YMMV)
         //
-        return -1; // replace with the correct expression
+
+        // get the index by counting from bottom to top left to right
+        // * 2 for each triangle within each coordinate in the mesh
+        int index = 2 * (j * (nI + wrapI - 1) + i);
+
+        if(isUL)
+          index++;
+
+        return index; // replace with the correct expression
     };
 
     // A regular mesh vertex has this many (at most) incident vertices.
@@ -71,7 +79,7 @@ class RegularMesh : public Mesh
         //
         // 1 line in instructor solution (YMMV)
         //
-        return 0; // replace (permits template to compile cleanly)
+        return j * nI + i; // replace (permits template to compile cleanly)
     };
 
 public:

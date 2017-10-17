@@ -85,6 +85,27 @@ void Track::addSupports(const double maxHeight)
     //
     // 15 lines in instructor solution (YMMV)
     //
+    for(int i = 0; i < nSupports; i++){
+        // get the current value of U that we have travelled around the track
+        double u = (double) i / (double) nSupports;
+
+        // use the guide curve to get the current location given u
+        Point3 top = (*guideCurve)(u, NULL);
+        Point3 bottom(top.u.g.x, top.u.g.y, 0);
+
+        // get the never parallel vector
+        Vector3 neverParallel(1, 0, 0);
+
+        // create the line segment
+        LineSegment *segment = new LineSegment(bottom, top, neverParallel);
+
+        // get ni and nj
+        int nJMax = 10;
+        int nj = max(2.0, round(top.u.g.z * nJMax / maxHeight) );
+        int ni = nTheta; // nTheta is sides for all Tubes used for track
+
+        supportTubes.push_back(new Tube(segment, radius, ni, nj, false));
+    }
 }
 
 
@@ -103,6 +124,26 @@ void Track::addTies(const Curve *leftRailCurve,
     //
     // 11 lines in instructor solution (YMMV)
     //
+    int nTies = nSupports * nTiesPerSupport;
+    // create all of the ties
+    for(int i = 0; i < nTies; i++){
+      // find u around the loop
+      double u = (double)i / (double)nTies;
+
+      Point3 l = (*leftRailCurve)(u, NULL);
+      Point3 r = (*rightRailCurve)(u, NULL);
+
+      // I am going to assume the left and right rail will
+      // not be directly above each other, so this Vector3
+      // works for the neverparallel
+      Vector3 neverParallel(0, 0, 1);
+      LineSegment *segment = new LineSegment(l, r, neverParallel);
+
+      int ni = nTheta;
+      int nj = 4;
+
+      tieTubes.push_back(new Tube(segment, radius, ni, nj, false));
+    }
 }
 
 
@@ -190,6 +231,9 @@ void Track::setGuideCurve(void)
     //   match the "never parallel" condition, since it is highly
     //   unlikely that your track will ever go straight up.
     //
+    // never parallel vector
+    Vector3 upVector(0, 0, 1);
+    guideCurve = new TrigonometricCurve(mag, freq, phase, offset, upVector);
 }
 
 
@@ -228,5 +272,25 @@ Track::Track(void) : SceneObject()
     //
     // 40 lines in instructor solution (YMMV)
     //
-}
 
+    // since this is just the vector to multiply to get the distance
+    // between the two rails, then we can use any vector as long as the z direction
+    // doesn't change by multiplying the vector
+    Vector3 uDirection(1, 0, 0);
+    Vector3 neverParallel(0, 0, 1);
+
+    Vector3 leftOffset = (.5 * railSep) * uDirection;
+    Vector3 rightOffset = (.5 * railSep) * uDirection;
+
+    setGuideCurve();
+    OffsetCurve *leftRailCurve = new OffsetCurve( guideCurve, leftOffset, neverParallel );
+    OffsetCurve *rightRailCurve = new OffsetCurve( guideCurve, rightOffset, neverParallel );
+
+    leftRailTube = new Tube(leftRailCurve, radius, nTheta, nRailSegments, true);
+
+    addTies(leftRailCurve, rightRailCurve);
+
+    double maxSupportHeight = mag.u.g.z * 2.0 + offset.u.g.z;
+
+    addSupports(maxSupportHeight);
+}

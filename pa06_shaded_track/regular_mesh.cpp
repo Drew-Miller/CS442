@@ -18,6 +18,9 @@ void RegularMesh::allocateBuffers(void)
     //
     // - Call glGenBuffers() to create `vertexNormalBufferId`.
     //
+    CHECK_GL(glGenBuffers(1, &vertexPositionsBufferId));
+    CHECK_GL(glGenBuffers(1, &vertexNormalBufferId));
+    CHECK_GL(glGenBuffers(1, &faceNormalBufferId));
 }
 
 
@@ -51,6 +54,17 @@ void RegularMesh::updateBuffers(void)
     //
     // 13 lines in instructor solution (YMMV)
     //
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions[0]) * nVertices,
+        vertexPositions, GL_STATIC_DRAW));
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexNormals[0]) * nVertices,
+        vertexNormals, GL_STATIC_DRAW));
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, indexBufferID));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexIndices[0]) * nVertexIndices,
+        vertexIndices, GL_STATIC_DRAW));
 }
 
 
@@ -190,6 +204,39 @@ const void RegularMesh::render(void)
     //
     // 24 lines in instructor solution (YMMV)
     //
+    GLint vpai = ShaderProgram::getCurrentAttributeIndex("vertexPosition");
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
+    CHECK_GL(glEnableVertexAttribArray(vpai));
+    CHECK_GL(glVertexAttribPointer(
+                 vpai, // index of attribute
+                 3, // # of elements per attribute
+                 GL_DOUBLE, // type of each component
+                 GL_FALSE,  // don't normalized fixed-point values
+                 0, // offset between consecutive generic vertex attributes
+                 BUFFER_OFFSET(0)));
+
+
+      // face/vertex normals
+     GLint vnai = ShaderProgram::getCurrentAttributeIndex("vertexNormal");
+
+     if(vnai != NO_SUCH_ATTRIBUTE){
+       CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+       CHECK_GL(glEnableVertexAttribArray(vnai));
+       CHECK_GL(glVertexAttribPointer(
+                    vnai, // index of attribute
+                    3, // # of elements per attribute
+                    GL_DOUBLE, // type of each component
+                    GL_FALSE,  // don't normalized fixed-point values
+                    0, // offset between consecutive generic vertex attributes
+                    BUFFER_OFFSET(0)));
+    }
+
+    CHECK_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId));
+
+    for(int j = 0; j < nJ - 1 + wrapJ, j++){
+      renderTriangleStrip(j);
+    }
 }
 
 
@@ -218,6 +265,7 @@ const void RegularMesh::renderTriangleStrip(const int j) const
     //   will compare the "stats" on your submission with those on the
     //   official submission to check your code.
     //
+    
 }
 
 
