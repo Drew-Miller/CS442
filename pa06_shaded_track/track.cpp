@@ -123,7 +123,7 @@ void Track::addTies(const Curve *leftRailCurve,
     // for these Tubes.
     //
     // 11 lines in instructor solution (YMMV)
-    //
+
     int nTies = nSupports * nTiesPerSupport;
     // create all of the ties
     for(int i = 0; i < nTies; i++){
@@ -276,21 +276,23 @@ Track::Track(void) : SceneObject()
     // since this is just the vector to multiply to get the distance
     // between the two rails, then we can use any vector as long as the z direction
     // doesn't change by multiplying the vector
+
     Vector3 uDirection(1, 0, 0);
     Vector3 neverParallel(0, 0, 1);
 
-    Vector3 leftOffset = (.5 * railSep) * uDirection;
-    Vector3 rightOffset = (.5 * railSep) * uDirection;
+    Vector3 leftOffset = (0.5 * railSep) * uDirection;
+    Vector3 rightOffset = (-0.5 * railSep) * uDirection;
 
     setGuideCurve();
     OffsetCurve *leftRailCurve = new OffsetCurve( guideCurve, leftOffset, neverParallel );
     OffsetCurve *rightRailCurve = new OffsetCurve( guideCurve, rightOffset, neverParallel );
 
     leftRailTube = new Tube(leftRailCurve, radius, nTheta, nRailSegments, true);
+    rightRailTube = new Tube(rightRailCurve, radius, nTheta, nRailSegments, true);
+
 
     addTies(leftRailCurve, rightRailCurve);
 
     double maxSupportHeight = mag.u.g.z * 2.0 + offset.u.g.z;
-
     addSupports(maxSupportHeight);
 }

@@ -6,7 +6,6 @@ using namespace std;
 #include "tube.h"
 #include "wrap_cmath_inclusion.h"
 
-
 void Tube::draw(SceneObject *sceneObject)
 {
     //
