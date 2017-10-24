@@ -22,10 +22,34 @@ const void BezierBasis::operator()(const double u,
     // You're welcome to look at
     // `UniformCubicBSplineBasis::operator()` as an example of the
     // way to lay out code, but remember that the coefficients are
-    // different.
+    // different.m3;
     //
     // 12 lines in instructor solution (YMMV)
     //
+    double u2 = u * u;
+    double u3 = u * u * u;
+    double m = (1.0 - u);
+    double m2 = m * m;
+    double m3 = m * m * m;
+
+    // bo = (1-t) ^ 3
+    // b1 = 3t (1-t)^2
+    // b2 = 3t^2 (1-t)
+    // b3 = t^3
+    bs[0] = m3;
+    bs[1] = 3 * u * m2;
+    bs[2] = 3 * u2 * m;
+    bs[3] = u3;
+
+    // if we want the derivative also
+    if(db_dus){
+      // derivatives
+      (*db_dus)[0] = -3 * u2 + 6 * u - 3;
+      (*db_dus)[1] = 9 * u2 - 12 * u + 3;
+      (*db_dus)[2] = 6 * u - 9 * u2;
+      (*db_dus)[3] = 3 * u2;
+
+    }
 }
 
 const void UniformCubicBSplineBasis::operator()(

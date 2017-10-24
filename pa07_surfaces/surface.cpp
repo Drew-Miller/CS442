@@ -42,6 +42,32 @@ void Surface::tessellate(void)
     //
     // 17 lines in instructor solution (YMMV)
     //
+    Point3 *vertexPositions = new Point3[nJ * nI];
+    Vector3 *vertexNormals = new Vector3[nJ * nI];
 
-    return;
+
+    double v = 0.0;
+    for(int j = 0; j < nJ; j++){
+      double u = 0.0;
+
+      for(int i = 0; i < nI; i++){
+        Vector3 tangentU, tangentV;
+        Point3 p = (*this)(u, v, tangentU, tangentV);
+
+        Vector3 n = (tangentV.cross(tangentU)).normalized();
+
+        vertexPositions = p;
+        vectexNormals = n;
+
+        // increment u
+        u += 1.0 / (nI + wrapI - 1);
+      }
+
+      v += 1.0 / (nJ + wrapJ - 1);
+    }
+
+    tessellationMesh = new RegularMesh(vertexPositions, vertexNormals, nI, nJ, true, false);
+
+    delete[] vertexPositions;
+    delete[] vertexNormals;
 }
