@@ -26,29 +26,28 @@ const void BezierBasis::operator()(const double u,
     //
     // 12 lines in instructor solution (YMMV)
     //
+
+    // pretty much same as below function without the division
     double u2 = u * u;
     double u3 = u * u * u;
-    double m = (1.0 - u);
-    double m2 = m * m;
-    double m3 = m * m * m;
 
     // bo = (1-t) ^ 3
     // b1 = 3t (1-t)^2
     // b2 = 3t^2 (1-t)
     // b3 = t^3
-    bs[0] = m3;
-    bs[1] = 3 * u * m2;
-    bs[2] = 3 * u2 * m;
+    // expanded from those functions:
+    bs[0] = -u3 + 3.0 * u2 - 3.0 * u + 1.0;
+    bs[1] = 3.0 * u3 - 6.0 * u2 + 3.0 * u;
+    bs[2] = 3.0 * u2 - 3.0 * u3;
     bs[3] = u3;
 
     // if we want the derivative also
     if(db_dus){
       // derivatives
-      (*db_dus)[0] = -3 * u2 + 6 * u - 3;
-      (*db_dus)[1] = 9 * u2 - 12 * u + 3;
-      (*db_dus)[2] = 6 * u - 9 * u2;
-      (*db_dus)[3] = 3 * u2;
-
+      (*db_dus)[0] = -3.0 * u2 + 6.0 * u - 3.0;
+      (*db_dus)[1] = 9.0 * u2 - 12.0 * u + 3.0;
+      (*db_dus)[2] = 6.0 * u - 9.0 * u2;
+      (*db_dus)[3] = 3.0 * u2;
     }
 }
 

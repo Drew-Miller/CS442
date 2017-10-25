@@ -35,6 +35,22 @@ const Point3 Tube::operator()(const double u, const double v,
     //
     // 10 lines in instructor solution (YMMV)
     //
-    return Point3(); // replace (permits template to compile cleanly)
-}
+    Point3 p;
+    Vector3 vU, vV, vW;
 
+    curve->coordinateFrame(v, p, vU, vV, vW);
+
+    double u_rad = 2 * M_PI * u;
+
+    // copied from pa06 solution for point offset
+    p = p + vU * radius * cos(u_rad) + vV * radius * sin(u_rad);
+
+    // derive the above for tangent dp / du
+    // dp/du = vU * radius * -sin(u_rad) + vV * radius * cos(u_rad);
+    dp_du = vU * radius * -sin(u_rad) + vV * radius * cos(u_rad);
+
+    // vW is in the same direction as v indicates
+    dp_dv = vW;
+
+    return p; // replace (permits template to compile cleanly)
+}
