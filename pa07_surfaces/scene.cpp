@@ -75,15 +75,6 @@ Scene::Scene(const Layout layout)
             "UniformColorShaderProgram");
     eadsShaderProgram = new EadsShaderProgram();
 
-    //
-    // ASSIGNMENT (PA07)
-    //
-    // Delete the next two lines (which keep the unmodified template
-    // from crashing).
-    //
-    uniformColorShaderProgram = NULL;
-    eadsShaderProgram = NULL;
-
     coordinateAxes = new CoordinateAxes();
 
     //
@@ -99,5 +90,15 @@ Scene::Scene(const Layout layout)
     //
     // 8 lines in instructor solution (YMMV)
     //
-}
+    // Light 1
+    addLight(new Light(whiteColor, Vector3(0, 0, -1)));
 
+    // Light 2
+    addLight(new Light(.50 * whiteColor, Vector3(0, 1, 0)));
+
+    Ground *ground = new Ground(2.0);
+
+    addSceneObject(new Track(layout, ground));
+    addSceneObject(ground);
+    addSceneObject(new Teapot());
+}

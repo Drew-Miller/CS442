@@ -80,7 +80,7 @@ void Track::addSupports(const double maxHeight, const Ground *ground)
 
         // use the guide curve to get the current location given u
         Point3 top = (*guideCurve)(u, NULL);
-        Point3 bottom(top.u.g.x, top.u.g.y, 0);
+        Point3 bottom(top.u.g.x, top.u.g.y, ground->height(top.u.g.x, top.u.g.y));
 
         // get the never parallel vector
         Vector3 neverParallel(1, 0, 0);
@@ -262,7 +262,8 @@ Track::Track(const Layout layout, const Ground *ground) : SceneObject()
     Vector3 leftOffset = (0.5 * railSep) * uDirection;
     Vector3 rightOffset = (-0.5 * railSep) * uDirection;
 
-    setGuideCurve();
+    setGuideCurve(layout);
+
     OffsetCurve *leftRailCurve = new OffsetCurve( guideCurve, leftOffset, neverParallel );
     OffsetCurve *rightRailCurve = new OffsetCurve( guideCurve, rightOffset, neverParallel );
 
@@ -274,7 +275,7 @@ Track::Track(const Layout layout, const Ground *ground) : SceneObject()
     addTies(leftRailCurve, rightRailCurve);
 
     double maxSupportHeight = mag.u.g.z * 2.0 + offset.u.g.z;
-    addSupports(maxSupportHeight);
+    addSupports(maxSupportHeight, ground);
 }
 
 

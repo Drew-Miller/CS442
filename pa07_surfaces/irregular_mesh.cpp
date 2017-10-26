@@ -236,40 +236,27 @@ IrregularMesh *IrregularMesh::read(const string fname)
 
 void IrregularMesh::updateBuffers(void)
 {
-    //
-    // Copy your previous (PA06) solution here.
-    //
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions[0]) * nVertices,
+        vertexPositions, GL_STATIC_DRAW));
 
-    // get all of the faces in the ni and nj direction and multiply by two
-    int iFaces = nI + wrapI - 1;
-    int jFaces = nJ + wrapJ - 1;
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexNormals[0]) * nVertices,
+        vertexNormals, GL_STATIC_DRAW));
 
-    nFaces = iFaces * jFaces * 2;
 
-    // create the faceNormals and faceCentroids
-    faceNormals = new Vector3[nFaces];
-    faceCentroids = new Point3[nFaces];
+    // BIND the face Normal vector to the vertices of the faces
+    Vec3 *faceNormalOfVertex = new Vec3[nVertices];
 
-    for(int i = 0; i < iFaces; i++){
-      for (int j = 0; j < jFaces; j++) {
-          // trianles within each face
-          int ulIndex = faceIndex(i, j, true);
-          int lrIndex = faceIndex(i, j, false);
-
-          Point3 *p = new Point3[4];
-
-          // get the quad boundary into the point p;
-          quadBoundary(i, j, p);
-
-          // create the centroids and the normals
-          faceCentroids[ulIndex] = triangleCentroid(p[0], p[2], p[3]);
-          faceCentroids[lrIndex] = triangleCentroid(p[0], p[1], p[2]);
-
-          faceNormals[ulIndex] = faceNormal(p[0], p[2], p[3]);
-          faceNormals[lrIndex] = faceNormal(p[0], p[1], p[2]);
-
-          // delete the points we allocated for quadboundary
-          delete[] p;
-      }
+    for (int iFace = 0; iFace < nFaces; iFace++) {
+          faceNormalOfVertex[iFace * 3 + 0] = faceNormals[iFace];
+          faceNormalOfVertex[iFace * 3 + 1] = faceNormals[iFace];
+          faceNormalOfVertex[iFace * 3 + 2] = faceNormals[iFace];
     }
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, faceNormalBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(faceNormalOfVertex[0]) * nVertices,
+    faceNormalOfVertex, GL_STATIC_DRAW));
+
+    delete faceNormalOfVertex;
 }

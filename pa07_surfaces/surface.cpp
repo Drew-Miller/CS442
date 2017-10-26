@@ -62,8 +62,8 @@ void Surface::tessellate(void)
         Vector3 n = (tangentV.cross(tangentU)).normalized();
 
         // set them in the arrays
-        vertexPositions = p;
-        vectexNormals = n;
+        vertexPositions[j * nI + i] = p;
+        vertexNormals[j * nI + i] = n;
 
         // increment u
         u += 1.0 / (nI + wrapI - 1);
