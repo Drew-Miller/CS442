@@ -90,6 +90,7 @@ Scene::Scene(const Layout layout)
     //
     // 8 lines in instructor solution (YMMV)
     //
+
     // Light 1
     addLight(new Light(whiteColor, Vector3(0, 0, -1)));
 

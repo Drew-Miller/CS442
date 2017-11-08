@@ -21,10 +21,9 @@ const Point3 BezierPatch::operator()(const double u, const double v,
     // starting point
     Point3 p(0,0,0);
 
-    if(&dp_du != NULL)
-      dp_du = Vector3();
-    if(&dp_dv != NULL)
-      dp_dv = Vector3();
+    // set the references
+    dp_du = Vector3();
+    dp_dv = Vector3();
 
     // set the control points fo the BezierPatch
     // cvs[4][4], iterate through all coordiantes and set
@@ -37,18 +36,13 @@ const Point3 BezierPatch::operator()(const double u, const double v,
         p += cv * u_bs[i] * v_bs[j];
 
         // have to change the derivates as well
-        if (&dp_du != NULL){
-          // These are point3s
-          Point3 offset = db_dus[i] * cv;
+        // These are point3s
+        Point3 offset_u = db_dus[i] * cv;
+        Point3 offset_v = db_dvs[j] * cv;
 
-          // easy conversion to vec3
-          dp_du += Vector3(offset.u.a);
-        }
-        if(&dp_dv != NULL){
-          Point3 offset = db_dvs[j] * cv;
-
-          dp_dv += Vector3(offset.u.a);
-        }
+        // easy conversion to vec3
+        dp_du += Vector3(offset_u.u.a);
+        dp_dv += Vector3(offset_v.u.a);
       }
     }
 
