@@ -273,7 +273,10 @@ const void RegularMesh::renderTriangleStrip(const int j) const
 
     CHECK_GL(glDrawElements(GL_TRIANGLE_STRIP, nIndicesInStrip, GL_UNSIGNED_INT, BUFFER_OFFSET(byteOffset)));
 
-    renderStats.ctTrianglesInRegularMeshes += nIndicesInStrip;
+    int nTrianglesInStrip = nIndicesInStrip - 2;
+
+    renderStats.ctVertices += nTrianglesInStrip * 3;
+    renderStats.ctTrianglesInRegularMeshes += nTrianglesInStrip;
     renderStats.ctTriangleStrips++;
 }
 
@@ -391,8 +394,8 @@ const void RegularMesh::createFaceNormalsAndCentroids(void)
           faceCentroids[ulIndex] = triangleCentroid(p[0], p[2], p[3]);
           faceCentroids[lrIndex] = triangleCentroid(p[0], p[1], p[2]);
 
-          faceNormals[ulIndex] = faceNormal(p[0], p[2], p[3]);
-          faceNormals[lrIndex] = faceNormal(p[0], p[1], p[2]);
+          faceNormals[ulIndex] = faceNormal(p[0], p[3], p[2]);
+          faceNormals[lrIndex] = faceNormal(p[0], p[2], p[1]);
 
           // delete the points we allocated for quadboundary
           delete[] p;
