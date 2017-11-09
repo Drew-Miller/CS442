@@ -37,8 +37,18 @@ const float EPSILON = 1.0e-5; // for single precision
 void main(void)
 {
     //
-    // Copy your previous (PA06) solution here.
+    // ASSIGNMENT (PA06)
     //
+    // Modify your previous (PA05) solution to allow for multiple
+    // lights using the lights[] array of structs, of which there are
+    // `nLights`.  This means summing the contribution to
+    // `reflectivity` of every light in a for-loop. The loop should
+    // contain the contents of the "All other light sources"
+    // pseudocode above. Be sure to set emittance only once, though
+    // (before entering the loop, say), as it is intrinsic to the
+    // object and does not come from a light.
+    //
+
     // set this value before the loop
     vec3 radiance = emittance;
 
@@ -74,6 +84,7 @@ void main(void)
     // after the loop, radiance should be properly calculated
     interpolatedColor = vec4(radiance, 1);
 
+    interpolatedColor = vec4(radiance, 1);
 #if 0 // debug
     interpolatedColor = vec4(vertexNormal, 1);
 #endif

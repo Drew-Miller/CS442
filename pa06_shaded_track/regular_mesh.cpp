@@ -394,8 +394,8 @@ const void RegularMesh::createFaceNormalsAndCentroids(void)
           faceCentroids[ulIndex] = triangleCentroid(p[0], p[2], p[3]);
           faceCentroids[lrIndex] = triangleCentroid(p[0], p[1], p[2]);
 
-          faceNormals[ulIndex] = faceNormal(p[0], p[3], p[2]);
-          faceNormals[lrIndex] = faceNormal(p[0], p[2], p[1]);
+          faceNormals[ulIndex] = faceNormal(p[0], p[2], p[3]);
+          faceNormals[lrIndex] = faceNormal(p[0], p[1], p[2]);
 
           // delete the points we allocated for quadboundary
           delete[] p;

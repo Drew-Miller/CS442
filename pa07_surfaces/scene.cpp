@@ -91,10 +91,8 @@ Scene::Scene(const Layout layout)
     // 8 lines in instructor solution (YMMV)
     //
 
-    // Light 1
+    // Add Lights
     addLight(new Light(whiteColor, Vector3(0, 0, -1)));
-
-    // Light 2
     addLight(new Light(.50 * whiteColor, Vector3(0, 1, 0)));
 
     Ground *ground = new Ground(2.0);

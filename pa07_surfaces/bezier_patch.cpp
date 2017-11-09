@@ -37,8 +37,8 @@ const Point3 BezierPatch::operator()(const double u, const double v,
 
         // have to change the derivates as well
         // These are point3s
-        Point3 offset_u = db_dus[i] * cv;
-        Point3 offset_v = db_dvs[j] * cv;
+        Point3 offset_u = cv * db_dus[i] * v_bs[j];
+        Point3 offset_v = cv * u_bs[i] * db_dvs[j];
 
         // easy conversion to vec3
         dp_du += Vector3(offset_u.u.a);

@@ -36,18 +36,18 @@ const void BezierBasis::operator()(const double u,
     // b2 = 3t^2 (1-t)
     // b3 = t^3
     // expanded from those functions:
-    bs[0] = -u3 + 3.0 * u2 - 3.0 * u + 1.0;
-    bs[1] = 3.0 * u3 - 6.0 * u2 + 3.0 * u;
-    bs[2] = 3.0 * u2 - 3.0 * u3;
+    bs[0] = 1 - 3 * u + 3 * u2 - u3;
+    bs[1] = 3 * u - 6 * u2 + 3 * u3;
+    bs[2] = 3 * u2 - 3 * u3;
     bs[3] = u3;
 
     // if we want the derivative also
     if(db_dus){
       // derivatives
-      (*db_dus)[0] = -3.0 * u2 + 6.0 * u - 3.0;
-      (*db_dus)[1] = 9.0 * u2 - 12.0 * u + 3.0;
-      (*db_dus)[2] = 6.0 * u - 9.0 * u2;
-      (*db_dus)[3] = 3.0 * u2;
+      (*db_dus)[0] = -3 + 6 * u - 3 * u2;
+      (*db_dus)[1] = 3 - 12 * u + 9 * u2;
+      (*db_dus)[2] = 6 * u - 9 * u2;
+      (*db_dus)[3] = 3 * u2;
     }
 }
 
