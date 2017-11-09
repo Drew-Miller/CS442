@@ -12,6 +12,8 @@ using namespace std;
 #include "track.h"
 #include "tube.h"
 
+#include <iostream>
+
 //
 //  track design parameters
 //
@@ -70,6 +72,7 @@ void Track::addSupports(const double maxHeight, const Ground *ground)
     //
     // Copy your previous (PA07) solution here.
     //
+
     for(int i = 0; i < nSupports; i++){
         // get the current value of U that we have travelled around the track
         double u = (double) i / (double) nSupports;

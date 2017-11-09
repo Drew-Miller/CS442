@@ -18,7 +18,6 @@
 #include "view.h"
 #include "wrap_cmath_inclusion.h"
 
-#include <iostream>
 using namespace std;
 
 const Color Scene::skyColor(0.5, 0.5, 1.0);
@@ -160,21 +159,17 @@ Scene::Scene(const Layout layout)
     // hardcoded color values for control over car color
     int nColors = 4;
     Rgb *colors = new Rgb[nColors];
-    colors[0] = Rgb(127, 0, 255);
-    colors[1] = Rgb(0, 255, 255);
-    colors[2] = Rgb(204, 0, 204);
-    colors[3] = Rgb(64, 64, 64);
+    colors[0] = Rgb(0, 76, 153);
+    colors[1] = Rgb(0, 204, 102);
+    colors[2] = Rgb(102, 0, 255);
+    colors[3] = Rgb(255, 0, 255);
 
     // create cars to the amount specified by the program
     for(int i = 0; i < nCars; i++){
       // get the initial u and color of the car
       double u = (double) i / (double) nCars;
-
-      Rgb col = colors[i % nColors];
-
       // add the car to the scene
-      Car *c = new Car(col, u, t->guideCurve);
-      cars[i] = c;
+      cars[i] = new Car(colors[i % nColors], u, t->guideCurve);
       addSceneObject(cars[i]);
     }
 

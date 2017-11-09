@@ -93,6 +93,26 @@ void Car::display(const Transform &viewProjectionTransform,
     //   (d), (c), then (b) then (a).)
     //
 
+
+
+    if(path == NULL) {
+      modelTransform = Transform(1.0, 0.0, 0.0, 0.0,
+                                 0.0, 1.0, 0.0, 0.0,
+                                 0.0, 0.0, 1.0, 0.0,
+                                 0.0, 0.0, 0.0, 1.0);
+    }
+    else{
+      modelTransform = path->coordinateFrame(u);
+      modelTransform.scale(.125, .125, .125);
+      modelTransform.translate(0.0, 0.0, 0.2);
+
+      // the last two transforms got my car in a weird direction,
+      // so I played around and discovered:
+      // x: roll, y: pitch, z: yaw
+      // and use those to orientate my cars
+      modelTransform.rotate(M_PI / 2, Vector3(0.0, 0.0, 1.0));
+    }
+
     if (scene->eadsShaderProgram) { // will be NULL in the template
         double specFrac = 0.25; // fraction of reflected power that's specular
         Rgb ambDiffBaseRgb = (1.0 - specFrac) * baseRgb;

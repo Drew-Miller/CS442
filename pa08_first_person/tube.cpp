@@ -7,8 +7,6 @@ using namespace std;
 #include "tube.h"
 #include "wrap_cmath_inclusion.h"
 
-#include <iostream>
-
 const Point3 Tube::operator()(const double u, const double v,
         Vector3 &dp_du, Vector3 &dp_dv) const
 //
@@ -57,8 +55,8 @@ const Point3 Tube::operator()(const double u, const double v,
     p = onCircle + vU * radius * cos(u_rad) + vV * radius * sin(u_rad);
 
     // derive p with respect to u, 2 * pi * u = u_rad
-    dp_du = 2 * M_PI * (vU * radius * -sin(u_rad) + vV * radius * cos(u_rad));
-    dp_dv = vW;
+    dp_du = transform * (2 * M_PI * (vU * radius * -sin(u_rad) + vV * radius * cos(u_rad)));
+    dp_dv = transform * vW;
 
     return p; // replace (permits template to compile cleanly)
 }
