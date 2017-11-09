@@ -542,13 +542,17 @@ const void EadsShaderProgram::start(void) const
     string indices[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
     for(int i = 0; i < nLights; i++){
-
       // create variable names for setting values
       string irradianceVar = "light[" + indices[i] + "].irradiance";
       string towardsVar = "light[" + indices[i] + "].towards";
 
       // set the components of each light
-      setUniform(irradianceVar, scene->lights[i]->irradiance);
+      if(controller.lightHedgehogIndex == LIGHT_HEDGEHOG_DISABLED ||
+          i == controller.lightHedgehogIndex)
+        setUniform(irradianceVar, scene->lights[i]->irradiance);
+      else
+        setUniform(irradianceVar, blackColor);
+
       setUniform(towardsVar, scene->lights[i]->towards());
     }
 }
