@@ -7,6 +7,7 @@
 #include "poly_line.h"
 #include "wrap_cmath_inclusion.h"
 
+#include <iostream>
 
 const Point3 BSplineCurve::operator()(const double u, Vector3 *dp_du) const
 {
@@ -91,12 +92,30 @@ const Transform Curve::coordinateFrame(const double u) const
     Vector3 vU = tangent.cross(vNeverParallel).normalized();
     Vector3 vV = vU.cross(vW).normalized();
 
-    // couldn't find an easy way to pass vec3 and get a mat4
-    // tried looping but doesn't help because would need switches
-    Transform transform = Transform(vU.u.g.x, vV.u.g.x, vW.u.g.x, p.u.g.x,
-                                    vU.u.g.y, vV.u.g.y, vW.u.g.z, p.u.g.z,
-                                    vU.u.g.z, vV.u.g.y, vW.u.g.z, p.u.g.z,
-                                    1.0,      1.0,      1.0,      1.0);
+    // I guess loops?
+    // couldn't get this to work, just hardcoded the constructor
+    /*
+    Transform transform();
+
+    for(int i = 0; i < 3){
+      transform.a[i + 0 ] = vU.u.a[i];
+      transform.a[i + 4 ] = vV.u.a[i];
+      transform.a[i + 8 ] = vW.u.a[i];
+      transform.a[i + 12] = p.u.a[i];
+    }
+
+    transform.a[3 ] = 0.0;
+    transform.a[7 ] = 0.0;
+    transform.a[11] = 0.0;
+    transform.a[15] = 1.0;
+    */
+
+    // pass in the values into the transform matrix
+    Transform transform = Transform(vU.u.g.x, vW.u.g.x, vV.u.g.x, p.u.g.x,
+                                    vU.u.g.y, vW.u.g.y, vV.u.g.y, p.u.g.y,
+                                    vU.u.g.z, vW.u.g.z, vV.u.g.z, p.u.g.z,
+                                    0.0,      0.0,      0.0,      1.0);
+                                    // 0 for vectors, 1 for points
 
     return transform; // replace (permits template to compile cleanly)
 }

@@ -132,18 +132,23 @@ Scene::Scene(const Layout layout)
     // 40 lines in instructor solution (YMMV)
     //
 
+    // set extent
+    int extent_ = 32;
+    camera.setExtent((double) extent_);
+
     // Add Lights
     addLight(new Light(whiteColor, Vector3(0, 0, -1)));
     addLight(new Light(.50 * whiteColor, Vector3(0, 1, 0)));
 
-    int extent_ = 32;
+    // - use extent_ with ground
+    // - have to set a track object for use in car and camera
+    //    instead of adding it to the scene directly as prior.
+    Ground *g = new Ground((double) extent_);
+    Track *t = new Track(layout, g);
 
-    // use the same objects as prior with a new extent
-    Ground *ground = new Ground((double) extent_);
-    camera.setExtent((double) extent_);
-
-    addSceneObject(new Track(layout, ground));
-    addSceneObject(ground);
+    // add the scene objects
+    addSceneObject(t);
+    addSceneObject(g);
 
     // add the teapot if the layout is not Layout_Trig
     if(layout != LAYOUT_TRIG)
@@ -154,18 +159,24 @@ Scene::Scene(const Layout layout)
 
     // hardcoded color values for control over car color
     int nColors = 4;
-    Rgb colors[] = { Rgb(127, 0, 255), Rgb(0, 255, 255), Rgb(204, 0, 204), Rgb(64, 64, 64) };
+    Rgb *colors = new Rgb[nColors];
+    colors[0] = Rgb(127, 0, 255);
+    colors[1] = Rgb(0, 255, 255);
+    colors[2] = Rgb(204, 0, 204);
+    colors[3] = Rgb(64, 64, 64);
 
     // create cars to the amount specified by the program
     for(int i = 0; i < nCars; i++){
       // get the initial u and color of the car
       double u = (double) i / (double) nCars;
-      Rgb color = colors[i % nColors];
+
+      Rgb col = colors[i % nColors];
 
       // add the car to the scene
-      cars[i] = new Car(colors[i % nColors], u, track->guideCurve);
+      Car *c = new Car(col, u, t->guideCurve);
+      cars[i] = c;
       addSceneObject(cars[i]);
     }
 
-    camera.setPath(track->guideCurve);
+    camera.setPath(t->guideCurve);
 }

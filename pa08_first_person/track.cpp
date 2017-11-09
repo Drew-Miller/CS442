@@ -12,7 +12,6 @@ using namespace std;
 #include "track.h"
 #include "tube.h"
 
-
 //
 //  track design parameters
 //
@@ -156,8 +155,9 @@ void Track::display(const Transform &viewProjectionTransform,
     scene->eadsShaderProgram->start();
 
     // draw ties
-    for (unsigned int i = 0; i < tieTubes.size(); i++)
+    for (unsigned int i = 0; i < tieTubes.size(); i++){
         tieTubes[i]->draw(this);
+    }
 
     // set rail attributes
 

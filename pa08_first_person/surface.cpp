@@ -5,6 +5,7 @@
 #include "scene_object.h"
 #include "surface.h"
 
+#include <iostream>
 
 void Surface::draw(SceneObject *sceneObject)
 {

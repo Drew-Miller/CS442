@@ -98,7 +98,7 @@ void main(void)
       towardsCamera = orthographicTowards;
     else{
       // get the convert the vec4 worldPosition to vec3
-      vec3 worldPosition3 = new vec3(worldPosition4.xyz);
+      vec3 worldPosition3 = vec3(worldPosition4.xyz);
       towardsCamera = cameraPosition - worldPosition3;
     }
 
@@ -144,5 +144,5 @@ void main(void)
 #endif
 
     // the position transform is trivial
-    gl_Position = viewMatrix * vertexPosition;
+    gl_Position = modelViewProjectionMatrix * vertexPosition;
 }

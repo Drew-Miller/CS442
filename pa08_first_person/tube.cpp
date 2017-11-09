@@ -7,6 +7,7 @@ using namespace std;
 #include "tube.h"
 #include "wrap_cmath_inclusion.h"
 
+#include <iostream>
 
 const Point3 Tube::operator()(const double u, const double v,
         Vector3 &dp_du, Vector3 &dp_dv) const
@@ -34,6 +35,7 @@ const Point3 Tube::operator()(const double u, const double v,
     //
     // 7 lines in instructor solution (YMMV)
     //
+
     Point3 p;
 
     // get the transform from the coordinateFrame
