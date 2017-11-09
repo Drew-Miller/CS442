@@ -146,7 +146,7 @@ Scene::Scene(const Layout layout)
     addSceneObject(ground);
 
     // add the teapot if the layout is not Layout_Trig
-    if(layout != Layout.LAYOUT_TRIG)
+    if(layout != LAYOUT_TRIG)
       addSceneObject(new Teapot());
 
     // allocate the cars to an array of pointers to cars
@@ -154,7 +154,7 @@ Scene::Scene(const Layout layout)
 
     // hardcoded color values for control over car color
     int nColors = 4;
-    Rgb[] colors = new Rgb[Rgb(127, 0, 255), Rgb(0, 255, 255), Rgb(204, 0, 204), Rgb(64, 64, 64)]
+    Rgb colors[] = { Rgb(127, 0, 255), Rgb(0, 255, 255), Rgb(204, 0, 204), Rgb(64, 64, 64) };
 
     // create cars to the amount specified by the program
     for(int i = 0; i < nCars; i++){
@@ -163,7 +163,7 @@ Scene::Scene(const Layout layout)
       Rgb color = colors[i % nColors];
 
       // add the car to the scene
-      cars[i] = new Car(color, u, track->guideCurve);
+      cars[i] = new Car(colors[i % nColors], u, track->guideCurve);
       addSceneObject(cars[i]);
     }
 

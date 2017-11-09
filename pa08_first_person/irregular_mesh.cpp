@@ -61,6 +61,11 @@ void IrregularMesh::allocateBuffers(void)
     //
     // Copy your previous (PA05) solution here.
     //
+    CHECK_GL(glGenBuffers(1, &vertexPositionsBufferId));
+
+    // Call glGenBuffers() for `vertexNormalBufferId` and `faceNormalBufferId`
+    CHECK_GL(glGenBuffers(1, &vertexNormalBufferId));
+    CHECK_GL(glGenBuffers(1, &faceNormalBufferId));
 }
 
 
@@ -91,6 +96,41 @@ const void IrregularMesh::render(void)
     //
     // Copy your previous (PA05) solution here.
     //
+    GLint vpai = ShaderProgram::getCurrentAttributeIndex("vertexPosition");
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
+    CHECK_GL(glEnableVertexAttribArray(vpai));
+    CHECK_GL(glVertexAttribPointer(
+                 vpai, // index of attribute
+                 3, // # of elements per attribute
+                 GL_DOUBLE, // type of each component
+                 GL_FALSE,  // don't normalized fixed-point values
+                 0, // offset between consecutive generic vertex attributes
+                 BUFFER_OFFSET(0)));
+
+
+      // face/vertex normals
+     GLint vnai = ShaderProgram::getCurrentAttributeIndex("vertexNormal");
+
+     if(vnai != NO_SUCH_ATTRIBUTE){
+       if(controller.useVertexNormals){
+         CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+       }
+       else{
+         CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, faceNormalBufferId));
+       }
+
+       CHECK_GL(glEnableVertexAttribArray(vnai));
+       CHECK_GL(glVertexAttribPointer(
+                    vnai, // index of attribute
+                    3, // # of elements per attribute
+                    GL_DOUBLE, // type of each component
+                    GL_FALSE,  // don't normalized fixed-point values
+                    0, // offset between consecutive generic vertex attributes
+                    BUFFER_OFFSET(0)));
+    }
+
+    renderTriangles();
 }
 
 
@@ -99,6 +139,10 @@ const void IrregularMesh::renderTriangles(void) const
     //
     // Copy your previous (PA03) solution here.
     //
+    CHECK_GL(glDrawArrays(GL_TRIANGLES, 0, 3 * nFaces));
+
+    renderStats.ctTrianglesInIrregularMeshes += nFaces;
+    renderStats.ctVertices += (3 * nFaces);
 }
 
 
@@ -195,4 +239,27 @@ void IrregularMesh::updateBuffers(void)
     //
     // Copy your previous (PA05) solution here.
     //
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions[0]) * nVertices,
+        vertexPositions, GL_STATIC_DRAW));
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexNormals[0]) * nVertices,
+        vertexNormals, GL_STATIC_DRAW));
+
+
+    // BIND the face Normal vector to the vertices of the faces
+    Vec3 *faceNormalOfVertex = new Vec3[nVertices];
+
+    for (int iFace = 0; iFace < nFaces; iFace++) {
+          faceNormalOfVertex[iFace * 3 + 0] = faceNormals[iFace];
+          faceNormalOfVertex[iFace * 3 + 1] = faceNormals[iFace];
+          faceNormalOfVertex[iFace * 3 + 2] = faceNormals[iFace];
+    }
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, faceNormalBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(faceNormalOfVertex[0]) * nVertices,
+    faceNormalOfVertex, GL_STATIC_DRAW));
+
+    delete faceNormalOfVertex;
 }

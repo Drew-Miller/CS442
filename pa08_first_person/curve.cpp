@@ -84,7 +84,7 @@ const Transform Curve::coordinateFrame(const double u) const
     // get dp_du from the constructor
     Vector3 tangent;
     // get the point and the tangent vector from the curve
-    p = (*this)(u, &tangent);
+    Point3 p = (*this)(u, &tangent);
 
     // get vW and normalize it
     Vector3 vW = tangent.normalized();

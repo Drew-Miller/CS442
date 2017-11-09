@@ -38,6 +38,14 @@ Car::Car(const Rgb &baseRgb_, double initialU, const Curve *path_)
     // 13 lines in instructor solution (YMMV)
     //
 
+    path = path_;
+    u = initialU;
+    baseRgb = baseRgb_;
+
+    // Since the car's IrregularMesh doesn't need to be tessellated
+    // (effectively), we can create the hedgehogs immediately.
+    irregularMesh = IrregularMesh::read(carFname.c_str());
+
     // Since the car's IrregularMesh doesn't need to be tessellated
     // (effectively), we can create the hedgehogs immediately.
     addHedgehogs(irregularMesh);
@@ -125,4 +133,3 @@ void Car::move(double dU)
     while (u > 1.0)
         u -= 1.0;
 }
-

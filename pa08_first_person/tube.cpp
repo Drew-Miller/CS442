@@ -49,7 +49,7 @@ const Point3 Tube::operator()(const double u, const double v,
 
     // get the point from the last position within the matrix
     // not sure if vec4 to multiply and then get xyz from that, but this works for now
-    Point3 onCircle = Point3(transform.a[12], trasnform.a[13], trasnform.a[14]);
+    Point3 onCircle = Point3(transform.a[12], transform.a[13], transform.a[14]);
 
     // copied from pa06 and modified to use onCircle
     p = onCircle + vU * radius * cos(u_rad) + vV * radius * sin(u_rad);

@@ -11,6 +11,29 @@ const void BezierBasis::operator()(const double u,
     //
     // Copy your previous (PA07) solution here.
     //
+
+    // pretty much same as below function without the division
+    double u2 = u * u;
+    double u3 = u * u * u;
+
+    // bo = (1-t) ^ 3
+    // b1 = 3t (1-t)^2
+    // b2 = 3t^2 (1-t)
+    // b3 = t^3
+    // expanded from those functions:
+    bs[0] = 1 - 3 * u + 3 * u2 - u3;
+    bs[1] = 3 * u - 6 * u2 + 3 * u3;
+    bs[2] = 3 * u2 - 3 * u3;
+    bs[3] = u3;
+
+    // if we want the derivative also
+    if(db_dus){
+      // derivatives
+      (*db_dus)[0] = -3 + 6 * u - 3 * u2;
+      (*db_dus)[1] = 3 - 12 * u + 9 * u2;
+      (*db_dus)[2] = 6 * u - 9 * u2;
+      (*db_dus)[3] = 3 * u2;
+    }
 }
 
 const void UniformCubicBSplineBasis::operator()(

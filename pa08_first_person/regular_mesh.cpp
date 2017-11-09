@@ -9,6 +9,9 @@ void RegularMesh::allocateBuffers(void)
     //
     // Copy your previous (PA06) solution here.
     //
+    CHECK_GL(glGenBuffers(1, &vertexPositionsBufferId));
+    CHECK_GL(glGenBuffers(1, &indexBufferId));
+    CHECK_GL(glGenBuffers(1, &vertexNormalBufferId));
 }
 
 
@@ -17,6 +20,17 @@ void RegularMesh::updateBuffers(void)
     //
     // Copy your previous (PA06) solution here.
     //
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions[0]) * nVertices,
+        vertexPositions, GL_STATIC_DRAW));
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexNormals[0]) * nVertices,
+        vertexNormals, GL_STATIC_DRAW));
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, indexBufferId));
+    CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexIndices[0]) * nVertexIndices,
+        vertexIndices, GL_STATIC_DRAW));
 }
 
 
@@ -107,6 +121,39 @@ const void RegularMesh::render(void)
     //
     // Copy your previous (PA06) solution here.
     //
+    GLint vpai = ShaderProgram::getCurrentAttributeIndex("vertexPosition");
+
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexPositionsBufferId));
+    CHECK_GL(glEnableVertexAttribArray(vpai));
+    CHECK_GL(glVertexAttribPointer(
+                 vpai, // index of attribute
+                 3, // # of elements per attribute
+                 GL_DOUBLE, // type of each component
+                 GL_FALSE,  // don't normalized fixed-point values
+                 0, // offset between consecutive generic vertex attributes
+                 BUFFER_OFFSET(0)));
+
+
+      // face/vertex normals
+     GLint vnai = ShaderProgram::getCurrentAttributeIndex("vertexNormal");
+
+     if(vnai != NO_SUCH_ATTRIBUTE){
+       CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferId));
+       CHECK_GL(glEnableVertexAttribArray(vnai));
+       CHECK_GL(glVertexAttribPointer(
+                    vnai, // index of attribute
+                    3, // # of elements per attribute
+                    GL_DOUBLE, // type of each component
+                    GL_FALSE,  // don't normalized fixed-point values
+                    0, // offset between consecutive generic vertex attributes
+                    BUFFER_OFFSET(0)));
+    }
+
+    CHECK_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId));
+
+    for(int j = 0; j < nJ - 1 + wrapJ; j++){
+      renderTriangleStrip(j);
+    }
 }
 
 
@@ -115,6 +162,18 @@ const void RegularMesh::renderTriangleStrip(const int j) const
     //
     // Copy your previous (PA06) solution here.
     //
+    // the total amount of triangle indices in the i direction
+    int nIndicesInStrip = (nI + wrapI) * 2;
+    // byte offset from the start of the glElementArray
+    int byteOffset = j * (sizeof(vertexIndices[0]) * nIndicesInStrip);
+
+    CHECK_GL(glDrawElements(GL_TRIANGLE_STRIP, nIndicesInStrip, GL_UNSIGNED_INT, BUFFER_OFFSET(byteOffset)));
+
+    int nTrianglesInStrip = nIndicesInStrip - 2;
+    renderStats.ctVertices += nTrianglesInStrip * 3;
+
+    renderStats.ctTrianglesInRegularMeshes += nTrianglesInStrip;
+    renderStats.ctTriangleStrips++;
 }
 
 
@@ -184,4 +243,36 @@ const void RegularMesh::createFaceNormalsAndCentroids(void)
     //
     // Copy your previous (PA06) solution here.
     //
+    // get all of the faces in the ni and nj direction and multiply by two
+    int iFaces = nI + wrapI - 1;
+    int jFaces = nJ + wrapJ - 1;
+
+    nFaces = iFaces * jFaces * 2;
+
+    // create the faceNormals and faceCentroids
+    faceNormals = new Vector3[nFaces];
+    faceCentroids = new Point3[nFaces];
+
+    for(int i = 0; i < iFaces; i++){
+      for (int j = 0; j < jFaces; j++) {
+          // trianles within each face
+          int ulIndex = faceIndex(i, j, true);
+          int lrIndex = faceIndex(i, j, false);
+
+          Point3 *p = new Point3[4];
+
+          // get the quad boundary into the point p;
+          quadBoundary(i, j, p);
+
+          // create the centroids and the normals
+          faceCentroids[ulIndex] = triangleCentroid(p[0], p[2], p[3]);
+          faceCentroids[lrIndex] = triangleCentroid(p[0], p[1], p[2]);
+
+          faceNormals[ulIndex] = faceNormal(p[0], p[2], p[3]);
+          faceNormals[lrIndex] = faceNormal(p[0], p[1], p[2]);
+
+          // delete the points we allocated for quadboundary
+          delete[] p;
+      }
+    }
 }
