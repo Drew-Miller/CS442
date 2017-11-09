@@ -87,12 +87,62 @@ void main(void)
     //
     // Copy your previous (PA06) solution here.
     //
+    // set this value before the loop
+
+    vec4 worldPosition4 = worldMatrix * vertexPosition;
+
+    // set the 'towardsCamera' value
+    vec3 towardsCamera;
+
+    if(useOrthographic == 1)
+      towardsCamera = orthographicTowards;
+    else{
+      // get the convert the vec4 worldPosition to vec3
+      vec3 worldPosition3 = new vec3(worldPosition4.xyz);
+      towardsCamera = cameraPosition - worldPosition3;
+    }
+
+    // normalize
+    towardsCamera = normalize(towardsCamera);
+
+
+    vec3 radiance = emittance;
+
+    for(int i = 0; i < nLights; i++){
+
+      vec3 reflectivity = ambientReflectivity;
+      vec3 towardsLight = light[i].towards;
+      vec3 irradiance = light[i].irradiance;
+
+      // get the normal vec for the world and the light s.t. we can determine
+      // the camera vec
+      vec3 worldNormal = normalize(vertexNormal * normalMatrix);
+      vec3 towardsLight_ = normalize(towardsLight);
+
+      float nDotL = dot(worldNormal, towardsLight_);
+
+      if(nDotL > 0.0){
+        reflectivity += (nDotL * maximumDiffuseReflectivity);
+
+        vec3 h = normalize(towardsCamera + towardsLight_);
+
+        float nDotH = dot(worldNormal, h);
+
+        if(nDotH > 0.0){
+          reflectivity += (maximumSpecularReflectivity * pow(nDotH, specularExponent));
+        }
+      }
+
+      // add the reflectivity from that light source
+      radiance += (irradiance * reflectivity);
+    }
 
     interpolatedColor = vec4(radiance, 1);
+
 #if 0 // debug
     interpolatedColor = vec4(vertexNormal, 1);
 #endif
 
     // the position transform is trivial
-    gl_Position = modelViewProjectionMatrix * vertexPosition;
+    gl_Position = viewMatrix * vertexPosition;
 }

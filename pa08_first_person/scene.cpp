@@ -101,8 +101,6 @@ Scene::Scene(const Layout layout)
     // Delete the next two lines (which keep the unmodified template
     // from crashing).
     //
-    uniformColorShaderProgram = NULL;
-    eadsShaderProgram = NULL;
 
     coordinateAxes = new CoordinateAxes();
 
@@ -133,5 +131,41 @@ Scene::Scene(const Layout layout)
     //
     // 40 lines in instructor solution (YMMV)
     //
-}
 
+    // Add Lights
+    addLight(new Light(whiteColor, Vector3(0, 0, -1)));
+    addLight(new Light(.50 * whiteColor, Vector3(0, 1, 0)));
+
+    int extent_ = 32;
+
+    // use the same objects as prior with a new extent
+    Ground *ground = new Ground((double) extent_);
+    camera.setExtent((double) extent_);
+
+    addSceneObject(new Track(layout, ground));
+    addSceneObject(ground);
+
+    // add the teapot if the layout is not Layout_Trig
+    if(layout != Layout.LAYOUT_TRIG)
+      addSceneObject(new Teapot());
+
+    // allocate the cars to an array of pointers to cars
+    cars = new Car *[nCars];
+
+    // hardcoded color values for control over car color
+    int nColors = 4;
+    Rgb[] colors = new Rgb[Rgb(127, 0, 255), Rgb(0, 255, 255), Rgb(204, 0, 204), Rgb(64, 64, 64)]
+
+    // create cars to the amount specified by the program
+    for(int i = 0; i < nCars; i++){
+      // get the initial u and color of the car
+      double u = (double) i / (double) nCars;
+      Rgb color = colors[i % nColors];
+
+      // add the car to the scene
+      cars[i] = new Car(color, u, track->guideCurve);
+      addSceneObject(cars[i]);
+    }
+
+    camera.setPath(track->guideCurve);
+}

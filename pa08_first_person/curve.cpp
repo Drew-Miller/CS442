@@ -80,7 +80,25 @@ const Transform Curve::coordinateFrame(const double u) const
     //
     // 13 lines in instructor solution (YMMV)
     //
-    return Transform(); // replace (permits template to compile cleanly)
+
+    // get dp_du from the constructor
+    Vector3 tangent;
+    // get the point and the tangent vector from the curve
+    p = (*this)(u, &tangent);
+
+    // get vW and normalize it
+    Vector3 vW = tangent.normalized();
+    Vector3 vU = tangent.cross(vNeverParallel).normalized();
+    Vector3 vV = vU.cross(vW).normalized();
+
+    // couldn't find an easy way to pass vec3 and get a mat4
+    // tried looping but doesn't help because would need switches
+    Transform transform = Transform(vU.u.g.x, vV.u.g.x, vW.u.g.x, p.u.g.x,
+                                    vU.u.g.y, vV.u.g.y, vW.u.g.z, p.u.g.z,
+                                    vU.u.g.z, vV.u.g.y, vW.u.g.z, p.u.g.z,
+                                    1.0,      1.0,      1.0,      1.0);
+
+    return transform; // replace (permits template to compile cleanly)
 }
 
 
@@ -123,6 +141,24 @@ const Point3 TrigonometricCurve::operator()(const double u,
     //
     // Copy your previous (PA06) solution here.
     //
-    return Point3(); // replace (permits template to compile cleanly)
-}
+    Vec3 a = 2 * M_PI * (freq * u + phase);
 
+    // Null Check
+    if(dp_du){
+    // Derivative: p = x * cos(2 * PI * (frequency * u + phase));
+    //            dp/du = x * 2 * PI * frequency * -sin(2 * PI * (frequency * u + phase));
+    //         OR dp/du = x * 2 * PI * frequency * -sin(a.u.g.x), a = 2 * PI * (frequency * u + phase)
+    //            substitute variables as needed for x,y,z
+      Vec3 iSin(-sin(a.u.g.x), -sin(a.u.g.y), -sin(a.u.g.z));
+
+      dp_du->u.g.x = mag.u.g.x * iSin.u.g.x * freq.u.g.x * 2 * M_PI;
+      dp_du->u.g.y = mag.u.g.y * iSin.u.g.y * freq.u.g.y * 2 * M_PI;
+      dp_du->u.g.z = mag.u.g.z * iSin.u.g.z * freq.u.g.z * 2 * M_PI;
+    }
+
+    double x = mag.u.g.x * cos(a.u.g.x) + offset.u.g.x;
+    double y = mag.u.g.y * cos(a.u.g.y) + offset.u.g.y;
+    double z = mag.u.g.z * cos(a.u.g.z) + offset.u.g.z;
+
+    return Point3(x, y, z);
+}

@@ -34,6 +34,29 @@ const Point3 Tube::operator()(const double u, const double v,
     //
     // 7 lines in instructor solution (YMMV)
     //
-    return Point3(); // replace (permits template to compile cleanly)
-}
+    Point3 p;
 
+    // get the transform from the coordinateFrame
+    Transform transform = curve->coordinateFrame(v);
+
+    // get the angle still
+    double u_rad = 2 * M_PI * u;
+
+    // transform from the matrix into vU, vV, vW frames
+    Vector3 vU = transform * Vector3(1.0, 0.0, 0.0);
+    Vector3 vV = transform * Vector3(0.0, 1.0, 0.0);
+    Vector3 vW = transform * Vector3(0.0, 0.0, 1.0);
+
+    // get the point from the last position within the matrix
+    // not sure if vec4 to multiply and then get xyz from that, but this works for now
+    Point3 onCircle = Point3(transform.a[12], trasnform.a[13], trasnform.a[14]);
+
+    // copied from pa06 and modified to use onCircle
+    p = onCircle + vU * radius * cos(u_rad) + vV * radius * sin(u_rad);
+
+    // derive p with respect to u, 2 * pi * u = u_rad
+    dp_du = 2 * M_PI * (vU * radius * -sin(u_rad) + vV * radius * cos(u_rad));
+    dp_dv = vW;
+
+    return p; // replace (permits template to compile cleanly)
+}
