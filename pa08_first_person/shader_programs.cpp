@@ -466,7 +466,7 @@ const void UniformColorShaderProgram::start(void) const
 
     // set shader attributes (uniform variables)
     setUniform("color", color);
-    setUniform("viewMatrix", viewMatrix, 4);
+    setUniform("modelViewProjectionMatrix", modelViewProjectionMatrix, 4);
 }
 
 
@@ -497,11 +497,18 @@ const void EadsShaderProgram::start(void) const
 {
     select();
 
-    // set camera property
-    setUniform("towardsCamera", camera.towards);
+    // set camera properties
+    setUniform("useOrthographic", controller.useOrthographic);
+    if (controller.useOrthographic) {
+        setUniform("orthographicTowards", camera.orthographic.towards);
+    } else {
+        setUniform("cameraPosition",
+                   (*camera.firstPerson.path)(camera.firstPerson.u));
+    }
 
     // set transform matrices
-    setUniform("viewMatrix", viewMatrix, 4);
+    setUniform("modelViewProjectionMatrix", modelViewProjectionMatrix, 4);
+    setUniform("worldMatrix", worldMatrix, 4);
     setUniform("normalMatrix", normalMatrix, 3);
 
     // set material properties
@@ -525,49 +532,27 @@ const void EadsShaderProgram::start(void) const
     // set light properties
 
     //
-    // ASSIGNMENT (PA06)
+    // Copy your previous (PA06) solution here.
     //
-    // Modify the code that sets a single light in PA05 to allow up to
-    // 10 lights. In a loop, set all components of the uniform `light`
-    // structs (see "eads_vertex_shader.glsl") for each light, as well
-    // as the uniform int `nLights`.
-    //
-    // To enable selective lighting, include the following code in
-    // the loop:
-    //
-    //     // If the light hedgehog is being drawn, set all irradiances
-    //     // except that of the light being drawn (`iLight`) to black.
-    //     if (controller.lightHedgehogIndex == LIGHT_HEDGEHOG_DISABLED
-    //             || iLight == controller.lightHedgehogIndex)
-    //         setUniform(nameBuffer, light->irradiance);
-    //     else
-    //         setUniform(nameBuffer, blackColor);
-    //
-    // `iLight` is the index of the light (from 0 to `nLights`-1).
-    // `nameBuffer` is the (string) name of the irradiance of the
-    // light being set, e.g. "light[1].irradiance" for `iLight` = 1.
-    // If the light hedgehog is being drawn, this will darken all but
-    // light `iLight`.
-    //
-    // Suggestion: Assert that there are no more than 10 lights (see
-    // the shader source).
-    //
-    
     int nLights = scene->lights.size();
     assert(nLights <= 10);
 
     // set nLights
     setUniform("nLights", nLights);
+    string indices[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
     for(int i = 0; i < nLights; i++){
-      string indices[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-
       // create variable names for setting values
       string irradianceVar = "light[" + indices[i] + "].irradiance";
       string towardsVar = "light[" + indices[i] + "].towards";
 
       // set the components of each light
-      setUniform(irradianceVar, scene->lights[i]->irradiance);
+      if(controller.lightHedgehogIndex == LIGHT_HEDGEHOG_DISABLED ||
+          i == controller.lightHedgehogIndex)
+        setUniform(irradianceVar, scene->lights[i]->irradiance);
+      else
+        setUniform(irradianceVar, blackColor);
+
       setUniform(towardsVar, scene->lights[i]->towards());
     }
 }

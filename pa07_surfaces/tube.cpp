@@ -47,7 +47,7 @@ const Point3 Tube::operator()(const double u, const double v,
 
     // derive the above for tangent dp / du
     // dp/du = vU * radius * -sin(u_rad) + vV * radius * cos(u_rad);
-    dp_du = vU * radius * -sin(u_rad) + vV * radius * cos(u_rad);
+    dp_du = 2 * M_PI * (vU * radius * -sin(u_rad) + vV * radius * cos(u_rad));
 
     // vW is in the same direction as v indicates
     dp_dv = vW;
