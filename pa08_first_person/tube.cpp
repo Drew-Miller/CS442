@@ -35,23 +35,31 @@ const Point3 Tube::operator()(const double u, const double v,
     //
 
     Point3 p;
+    Vector3 vU, vW, vV;
 
     // get the transform from the coordinateFrame
     Transform transform = curve->coordinateFrame(v);
 
     // get the angle still
-    double u_rad = 2 * M_PI * u;
+    double u_a = 2 * M_PI * u;
 
-    Point3 onCircle = Point3(radius * cos(u_rad), radius * sin(u_rad), 0.0);
+    // get vU, vW, vV and p from the transform
+    p = Point3(transform.a[12], transform.a[13], transform.a[14]);
+    vU = Vector3(transform.a[0], transform.a[1], transform.a[2]);
+    vW = Vector3(transform.a[4], transform.a[5], transform.a[6]);
+    vV = Vector3(transform.a[8], transform.a[9], transform.a[10]);
 
-    Vector3 vU(-1 * radius * sin(u_rad), radius * cos(u_rad), 0.0);
-    Vector3 vV(0, 0, 1);
+    // get p on the circle
+    p = p + vU * radius * cos(u_a) + vV * radius * sin(u_a);
 
+    // set dp_du and dp_dv
+    dp_du = 2 * M_PI * (vU * radius * -sin(u_a) + vV * radius * cos(u_a));
+    dp_dv = vW;
 
-    // derive p with respect to u, 2 * pi * u = u_rad
-    p = transform * onCircle;
-    dp_du = transform * vU;
-    dp_dv = transform * vV;
+    // transform each variable by the matrix
+    p =  p;
+    dp_du =  dp_du;
+    dp_dv =  dp_dv;
 
     return p; // replace (permits template to compile cleanly)
 }

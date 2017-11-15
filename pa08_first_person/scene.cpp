@@ -174,4 +174,6 @@ Scene::Scene(const Layout layout)
     }
 
     camera.setPath(t->guideCurve);
+
+    delete[] colors;
 }
