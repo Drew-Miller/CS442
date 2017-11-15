@@ -7,8 +7,6 @@
 #include "poly_line.h"
 #include "wrap_cmath_inclusion.h"
 
-#include <iostream>
-
 const Point3 BSplineCurve::operator()(const double u, Vector3 *dp_du) const
 {
     assert(0.0 <= u && u <= 1.0);
@@ -91,24 +89,6 @@ const Transform Curve::coordinateFrame(const double u) const
     Vector3 vW = tangent.normalized();
     Vector3 vU = tangent.cross(vNeverParallel).normalized();
     Vector3 vV = vU.cross(vW).normalized();
-
-    // I guess loops?
-    // couldn't get this to work, just hardcoded the constructor
-    /*
-    Transform transform();
-
-    for(int i = 0; i < 3){
-      transform.a[i + 0 ] = vU.u.a[i];
-      transform.a[i + 4 ] = vV.u.a[i];
-      transform.a[i + 8 ] = vW.u.a[i];
-      transform.a[i + 12] = p.u.a[i];
-    }
-
-    transform.a[3 ] = 0.0;
-    transform.a[7 ] = 0.0;
-    transform.a[11] = 0.0;
-    transform.a[15] = 1.0;
-    */
 
     // pass in the values into the transform matrix
     Transform transform = Transform(vU.u.g.x, vW.u.g.x, vV.u.g.x, p.u.g.x,

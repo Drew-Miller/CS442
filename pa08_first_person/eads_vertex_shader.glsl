@@ -106,6 +106,8 @@ void main(void)
     towardsCamera = normalize(towardsCamera);
 
 
+
+    // set this value before the loop
     vec3 radiance = emittance;
 
     for(int i = 0; i < nLights; i++){
@@ -116,7 +118,7 @@ void main(void)
 
       // get the normal vec for the world and the light s.t. we can determine
       // the camera vec
-      vec3 worldNormal = normalize(vertexNormal * normalMatrix);
+      vec3 worldNormal = normalize(normalMatrix * vertexNormal);
       vec3 towardsLight_ = normalize(towardsLight);
 
       float nDotL = dot(worldNormal, towardsLight_);
@@ -137,7 +139,8 @@ void main(void)
       radiance += (irradiance * reflectivity);
     }
 
-    interpolatedColor = vec4(radiance, 1);
+    // after the loop, radiance should be properly calculated
+    interpolatedColor = vec4(radiance, 1);;
 
 #if 0 // debug
     interpolatedColor = vec4(vertexNormal, 1);
