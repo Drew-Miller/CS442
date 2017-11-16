@@ -12,6 +12,8 @@ using namespace std;
 #include "track.h"
 #include "tube.h"
 
+#include <iostream>
+
 //
 //  track design parameters
 //
@@ -331,10 +333,16 @@ const double Track::speed(double u) const
     // There's a global `gravAccel` that's g (the gravitational
     // acceleration at the Earth's surface) in NDC units.
     //
+
+    // PEtop = KEbot = 1/2 * m * v^2
+    // E = PE + KE = constant
+
     Point3 p = (*guideCurve)(u, NULL, NULL);
     double dz = guideCurve->zMax() - p.u.g.z;
 
-    return speedAtTop + gravAccel * dz; // replace (permits template to compile cleanly)
+    double speed = sqrt(speedAtTop * speedAtTop + 2 * gravAccel * dz);
+
+    return speed; // replace (permits template to compile cleanly)
 }
 
 
