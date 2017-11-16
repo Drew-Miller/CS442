@@ -12,8 +12,6 @@ using namespace std;
 #include "track.h"
 #include "tube.h"
 
-#include <iostream>
-
 //
 //  track design parameters
 //
