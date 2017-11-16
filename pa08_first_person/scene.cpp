@@ -153,10 +153,10 @@ Scene::Scene(const Layout layout)
     // hardcoded color values for control over car color
     int nColors = 4;
     Rgb *colors = new Rgb[nColors];
-    colors[0] = Rgb(0, 76, 153);
-    colors[1] = Rgb(0, 204, 102);
-    colors[2] = Rgb(102, 0, 255);
-    colors[3] = Rgb(255, 0, 255);
+    colors[0] = Rgb(0, .105, .597);
+    colors[1] = Rgb(0, .797, .398);
+    colors[2] = Rgb(.398, 0, .996);
+    colors[3] = Rgb(1.0, 0, 1.0);
 
     // create cars to the amount specified by the program
     for(int i = 0; i < nCars; i++){
