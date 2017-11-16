@@ -95,7 +95,21 @@ const double Curve::zMax(void) const
     // numerical analysis, a good elective for computer graphicists to
     // take for reasons like this, but we don't assume it here.)
     //
-    return 0.0; // replace (permits template to compile cleanly)
+    int steps = 1000;
+    double zMax = 0.0;
+    Point3 p;
+    double u = 0.0;
+
+    // find z max along the curve
+    for(int i = 0; i < steps; i++){
+        u = (double)i / steps;
+        p = (*guideCurve)(u, NULL);
+
+        if(p.u.g.z > zMax)
+          zMax = p.u.g.z;
+    }
+
+    return zMax; // replace (permits template to compile cleanly)
 }
 
 
@@ -255,4 +269,3 @@ const Point3 TrigonometricCurve::operator()(const double u, Vector3 *dp_du,
     //
     return Point3(); // replace (permits template to compile cleanly)
 }
-
