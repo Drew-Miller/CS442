@@ -92,9 +92,6 @@ void Car::display(const Transform &viewProjectionTransform,
     //   (Remember, the vertices will first be transformed by (e),
     //   (d), (c), then (b) then (a).)
     //
-
-
-
     if(path == NULL) {
       modelTransform = Transform(1.0, 0.0, 0.0, 0.0,
                                  0.0, 1.0, 0.0, 0.0,

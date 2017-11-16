@@ -94,12 +94,6 @@ Scene::Scene(const Layout layout)
     uniformColorShaderProgram = new UniformColorShaderProgram(
             "UniformColorShaderProgram");
     eadsShaderProgram = new EadsShaderProgram();
-    //
-    // ASSIGNMENT (PA08)
-    //
-    // Delete the next two lines (which keep the unmodified template
-    // from crashing).
-    //
 
     coordinateAxes = new CoordinateAxes();
 
