@@ -65,7 +65,7 @@ void IrregularMesh::allocateBuffers(void)
 
     // Call glGenBuffers() for `vertexNormalBufferId` and `faceNormalBufferId`
     CHECK_GL(glGenBuffers(1, &vertexNormalBufferId));
-  CHECK_GL(glGenBuffers(1, &faceNormalBufferId));
+    CHECK_GL(glGenBuffers(1, &faceNormalBufferId));
 }
 
 

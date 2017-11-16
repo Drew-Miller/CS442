@@ -39,10 +39,5 @@ const Point3 Tube::operator()(const double u, const double v,
     dp_du = 2 * M_PI * (vU * radius * -sin(u_a) + vV * radius * cos(u_a));
     dp_dv = vW;
 
-    // transform each variable by the matrix
-    p =  p;
-    dp_du =  dp_du;
-    dp_dv =  dp_dv;
-
     return p; // replace (permits template to compile cleanly)
 }

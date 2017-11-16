@@ -297,7 +297,7 @@ public:
         double b2 = other.u.a[1];
         double b3 = other.u.a[2];
 
-        return Vector3(a2*b3 - a3*b2, a3*b1 - a1*b3, a1*b2 - a2*b1);, 1);
+        return Vector3(a2*b3 - a3*b2, a3*b1 - a1*b3, a1*b2 - a2*b1);
     };
 };
 

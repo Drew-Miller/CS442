@@ -108,4 +108,14 @@ const void UniformCubicBSplineBasis::operator()(
     // Look at the first derivative calculation above as a guideline
     // for a readable layout of the code.
     //
+    if (d2b_du2s) {
+        //
+        // ... and these are their derivatives wrt u. (Notice how the
+        // notation lets you confirm this by inspection.)
+        //
+        (*d2b_du2s)[0] = (-6*u +  6       ) / 6.0;
+        (*d2b_du2s)[1] = ( 18*u - 12      ) / 6.0;
+        (*d2b_du2s)[2] = (-18*u +  6      ) / 6.0;
+        (*d2b_du2s)[3] = ( 6*u            ) / 6.0;
+    }
 }

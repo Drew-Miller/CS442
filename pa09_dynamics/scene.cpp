@@ -18,7 +18,6 @@
 #include "view.h"
 #include "wrap_cmath_inclusion.h"
 
-#include <iostream>
 using namespace std;
 
 const Color Scene::skyColor(0.5, 0.5, 1.0);
@@ -160,6 +159,9 @@ Scene::Scene(const Layout layout)
     //    instead of adding it to the scene directly as prior.
     Ground *g = new Ground((double) extent_);
     Track *t = new Track(layout, g);
+
+    if(track == NULL)
+      track = t;
 
     // add the scene objects
     addSceneObject(t);

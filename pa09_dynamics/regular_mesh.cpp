@@ -3,6 +3,7 @@
 #include "render_stats.h"
 #include "regular_mesh.h"
 
+#include <iostream>
 
 void RegularMesh::allocateBuffers(void)
 {
@@ -63,7 +64,7 @@ bool RegularMesh::pointsAreDistinct(void)
             if (     -EPSILON < dx && dx < EPSILON
                   && -EPSILON < dy && dy < EPSILON
                   && -EPSILON < dz && dz < EPSILON)
-                return false;
+                      return false;
         }
     }
     return true;

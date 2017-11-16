@@ -69,7 +69,7 @@ vec3 getRadiance(vec3 worldNormal, vec3 towardsCamera)
 // function in a surprising way in the next PA.)
 //
 {
-    vec3 radiance = emmitance;
+    vec3 radiance = emittance;
 
     for(int i = 0; i < nLights; i++){
 
@@ -134,7 +134,7 @@ void main(void)
     vec3 worldNormal = normalize(normalMatrix * vertexNormal);
 
     // use a function call instead of the loop
-    vec3 radiance = getRadiance(worldNormal, toawrdsCamera);
+    vec3 radiance = getRadiance(worldNormal, towardsCamera);
 
     interpolatedColor = vec4(radiance, 1);;
 

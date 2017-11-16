@@ -12,7 +12,6 @@ using namespace std;
 #include "track.h"
 #include "tube.h"
 
-
 //
 //  track design parameters
 //
@@ -94,17 +93,21 @@ void Track::addSupports(const double maxHeight, const Ground *ground)
     // a support and, if so, do what you did in PA06.
     //
 
+    double dSTie = tieSeparation();
     double dSSupport = supportSeparation();
     int nU;
-    double dU = integrationStep(&nU);
+    double dU = integrationStep(nU);
 
     double s = 0.0;
+    double sNextTie = 0.0;
     double sNextSupport = 0.0;
 
-    for(int i = 0; i < nu - 1; i++){
-        // get the current value of U that we have travelled around the track
-        double u = (double) i * dU;
+    // create all of the ties
+    for(int i = 0; i < nU - 1; i++){
+      // find u around the loop
+      double u = (double)i * dU;
 
+      if(s >= sNextTie){
         if(s >= sNextSupport){
           // use the guide curve to get the current location given u
           Point3 top = (*guideCurve)(u, NULL);
@@ -126,7 +129,10 @@ void Track::addSupports(const double maxHeight, const Ground *ground)
           sNextSupport += dSSupport;
         }
 
-        s += guideCurve->dS(u, dU);
+        sNextTie += dSTie;
+      }
+
+      s += guideCurve->dS(u, dU);
     }
 }
 
@@ -166,7 +172,7 @@ void Track::addTies()
     //
     double dSTie = tieSeparation();
     int nU;
-    double dU = integrationStep(&nU);
+    double dU = integrationStep(nU);
 
     double s = 0.0;
     double sNextTie = 0.0;
@@ -219,7 +225,7 @@ void Track::display(const Transform &viewProjectionTransform,
     scene->eadsShaderProgram->setSpecular(0.4 * whiteRgb, 40.0);
     scene->eadsShaderProgram->start();
 
-    // draw supports
+    // draw supports;
     for (unsigned int i = 0; i < supportTubes.size(); i++)
         supportTubes[i]->draw(this);
 
@@ -360,19 +366,22 @@ Track::Track(const Layout layout, const Ground *ground)
     Vector3 leftOffset = (0.5 * railSep) * uDirection;
     Vector3 rightOffset = (-0.5 * railSep) * uDirection;
 
+    setGuideCurve(layout);
+
     zMax = guideCurve->zMax();
     guideCurve->enableDynamicFrame();
 
-    setGuideCurve(layout);
+    leftRailCurve = new OffsetCurve( guideCurve, leftOffset, neverParallel );
+    rightRailCurve = new OffsetCurve( guideCurve, rightOffset, neverParallel );
 
-    *leftRailCurve = new OffsetCurve( guideCurve, leftOffset, neverParallel );
-    *rightRailCurve = new OffsetCurve( guideCurve, rightOffset, neverParallel );
+    // get nRailSegments
+    int nRailSegments = guideCurve->length() / approxRailSegmentLength;
 
     leftRailTube = new Tube(leftRailCurve, radius, nTheta, nRailSegments, true);
-    // the rightRailTube wasn't asked for in the instructions, but through gdb debugging it seems it cannot be null
     rightRailTube = new Tube(rightRailCurve, radius, nTheta, nRailSegments, true);
 
     double maxSupportHeight = mag.u.g.z * 2.0 + offset.u.g.z;
+
     addSupports(maxSupportHeight, ground);
 }
 
