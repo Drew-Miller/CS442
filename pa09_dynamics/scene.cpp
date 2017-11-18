@@ -43,6 +43,24 @@ void Scene::addSceneObject(SceneObject *sceneObject)
 }
 
 
+const double Scene::cameraSpeed(void) const
+{
+    //
+    // ASSIGNMENT (PA09)
+    //
+    // If `cars` is NULL (e.g. if it hasn't been defined yet), return
+    // 0.0. Otherwise, return the speed of the camera used for
+    // first-person mode (that of cars[0]).
+    //
+    // 1 line in instructor solution (YMMV)
+    //
+    if(cars == NULL)
+      return 0.0;
+
+    return cars[0]->speed(track); // replace (permits template to compile cleanly)
+}
+
+
 void Scene::display(void)
 //
 // draws all objects in the scene
@@ -77,15 +95,42 @@ void Scene::display(void)
 }
 
 
-void Scene::step(double du)
+void Scene::step(double dtReq)
 //
 // moves each of the cars and the camera (for use in first person
-// mode) by `du`
+// mode) by `du`, computing the distance `du` traveled by each car in
+// time `dtReq`
+//
+// also moves the camera by the same amount as the first car
 //
 {
-    for (int i = 0; i < nCars; i++)
-        cars[i]->move(du);
-    camera.move(du);
+    //
+    // Move the cars and camera by no more than this time step. If
+    // `dtReq` is smaller, use it instead. If `dtReq` is larger, take
+    // steps no longer than this value.
+    //
+
+    // dtMax which is a negative power of 2 reduces the likelihood of
+    // roundoff problems
+    const double dtMax = 1.0 / 1024.0; // resolution of ~1ms
+
+    double dtSum = 0.0;
+    while (dtSum < dtReq) {
+        double dt = dtReq - dtSum; // step size
+        if (dt > dtMax)
+            dt = dtMax;
+        for (int i = 0; i < nCars; i++) {
+            Vector3 dp_du;
+            (*cars[i]->path)(cars[i]->u, &dp_du);
+            double ds_du = dp_du.mag();
+            // A car's speed is ds/dt, which is equal to ds/du * du/dt, so...
+            double du = cars[i]->speed(track) * dt / ds_du;
+            if (i == 0) // assume the camera is at car[0]
+                camera.move(du);
+            cars[i]->move(du);
+        }
+        dtSum += dt;
+    }
 }
 
 
@@ -98,31 +143,7 @@ Scene::Scene(const Layout layout)
     coordinateAxes = new CoordinateAxes();
 
     //
-    // ASSIGNMENT (PA08)
-    //
-    // Modify your previous (PA07) solution here:
-    //
-    // - Increase the extent ("extent_") of the enviroment to 32 (so
-    //   that there's a relatively distant horizon). In addtion to
-    //   Ground::Ground(), pass the same value to camera.setExtent().
-    //
-    // - Don't add a Teapot to the scene if `layout` is LAYOUT_TRIG.
-    //   (Actually, there's no real harm in doing this if you're
-    //   prepared for your car to pass through the teapot!)
-    //
-    // - Allocate `cars` to be an array of `nCars` (pointers to) Cars:
-    //
-    //   * Space them equally in the `u` parameter by setting
-    //     `initialU` to an integer multiple of `1.0 / nCars`.
-    //
-    //   * Choose an assortment of `baseRgb` values (perhaps from a
-    //     table?) so you can distinguish one car from another.
-    //
-    //   * Add each Car to the scene (with addSceneObject()).
-    //
-    // - Set the camera's path to follow the track's guide curve.
-    //
-    // 40 lines in instructor solution (YMMV)
+    // Copy your previous (PA08) solution here.
     //
 
     // set extent
@@ -138,6 +159,9 @@ Scene::Scene(const Layout layout)
     //    instead of adding it to the scene directly as prior.
     Ground *g = new Ground((double) extent_);
     Track *t = new Track(layout, g);
+
+    if(track == NULL)
+      track = t;
 
     // add the scene objects
     addSceneObject(t);

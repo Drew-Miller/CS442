@@ -7,6 +7,7 @@ using namespace std;
 #include "tube.h"
 #include "wrap_cmath_inclusion.h"
 
+
 const Point3 Tube::operator()(const double u, const double v,
         Vector3 &dp_du, Vector3 &dp_dv) const
 //
@@ -16,24 +17,6 @@ const Point3 Tube::operator()(const double u, const double v,
 // parameters. They both vary from 0 to 1.
 //
 {
-    //
-    // ASSIGNMENT (PA08)
-    //
-    // Modify your previous (PA07) solution to get and use the
-    // transform that `curve->coordinateFrame(v)` now returns. The
-    // cleanest way to do this is construct a Point3 on a circle in
-    // the UV plane (i.e., in model coordinates) and apply the
-    // transform to it. Also apply it to model coordinate tangent
-    // vectors to get (tangential) `dp_du` and (axial) `dp_dv`
-    // vectors. (Think: How would you define the tangents to a
-    // cylinder in model coordinates?)
-    //
-    // Note that, unlike normal vectors, tangent vectors transform
-    // like any other vectors.
-    //
-    // 7 lines in instructor solution (YMMV)
-    //
-
     Point3 p;
     Vector3 vU, vW, vV;
 
@@ -55,11 +38,6 @@ const Point3 Tube::operator()(const double u, const double v,
     // set dp_du and dp_dv
     dp_du = 2 * M_PI * (vU * radius * -sin(u_a) + vV * radius * cos(u_a));
     dp_dv = vW;
-
-    // transform each variable by the matrix
-    p =  p;
-    dp_du =  dp_du;
-    dp_dv =  dp_dv;
 
     return p; // replace (permits template to compile cleanly)
 }

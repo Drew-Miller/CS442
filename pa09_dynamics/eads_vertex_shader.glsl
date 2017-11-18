@@ -58,56 +58,17 @@ in vec3 vertexNormal;
 smooth out vec4 interpolatedColor;
 const float EPSILON = 1.0e-5; // for single precision
 
-void main(void)
+vec3 getRadiance(vec3 worldNormal, vec3 towardsCamera)
+//
+// ASSIGNMENT (PA09)
+//
+// To see how easy it is to create a function in GLSL, extract the
+// loop in main() that computes the radiance (given `worldNormal` and
+// `towardsCamera`) and make it this separate function which returns
+// the emitted and reflected radiance.  (We'll make use of this
+// function in a surprising way in the next PA.)
+//
 {
-    //
-    // ASSIGNMENT (PA08)
-    //
-    // Insert the following code here:
-    //
-    // - Use `worldMatrix` to transform `vertexPosition` into world
-    //   coordinates.
-    //
-    // - Declare a vec3 `towardsCamera` and set it in one of two ways:
-    //
-    //   * If `useOrthographic` is 1, set it to `orthographicTowards`.
-    //
-    //   * If `useOrthographic` is not 1, set it to
-    //     the difference of `cameraPosition` and `worldPosition`.
-    //
-    // - Normalize `towardsCamera`.
-    //
-    // In an orthographic view, `towardsCamera` is a constant vector
-    // because the camera is effectively an infinite distance away so
-    // it made sense to pass it in as a uniform variable, but when we
-    // add a perspective view, the camera is at a fixed location so
-    // the direction towards it depends on the vertex we're shading.
-    //
-
-    //
-    // Copy your previous (PA06) solution here.
-    //
-    // set this value before the loop
-
-    vec4 worldPosition4 = worldMatrix * vertexPosition;
-
-    // set the 'towardsCamera' value
-    vec3 towardsCamera;
-
-    if(useOrthographic == 1)
-      towardsCamera = orthographicTowards;
-    else{
-      // get the convert the vec4 worldPosition to vec3
-      vec3 worldPosition3 = vec3(worldPosition4.xyz);
-      towardsCamera = cameraPosition - worldPosition3;
-    }
-
-    // normalize
-    towardsCamera = normalize(towardsCamera);
-
-
-
-    // set this value before the loop
     vec3 radiance = emittance;
 
     for(int i = 0; i < nLights; i++){
@@ -118,7 +79,6 @@ void main(void)
 
       // get the normal vec for the world and the light s.t. we can determine
       // the camera vec
-      vec3 worldNormal = normalize(normalMatrix * vertexNormal);
       vec3 towardsLight_ = normalize(towardsLight);
 
       float nDotL = dot(worldNormal, towardsLight_);
@@ -139,7 +99,43 @@ void main(void)
       radiance += (irradiance * reflectivity);
     }
 
-    // after the loop, radiance should be properly calculated
+    return radiance; // to be replaced
+}
+
+void main(void)
+{
+    //
+    // Copy your previous (PA08) solution here.
+    //
+
+    //
+    // ASSIGNMENT (PA09)
+    //
+    // Replace the code that did the light calculation here with an
+    // expression that makes a single call to getRadiance(). This
+    // should not change the image in any way.
+    //
+
+    vec4 worldPosition4 = worldMatrix * vertexPosition;
+
+    // set the 'towardsCamera' value
+    vec3 towardsCamera;
+
+    if(useOrthographic == 1)
+      towardsCamera = orthographicTowards;
+    else{
+      // get the convert the vec4 worldPosition to vec3
+      vec3 worldPosition3 = vec3(worldPosition4.xyz);
+      towardsCamera = cameraPosition - worldPosition3;
+    }
+
+    // normalize
+    towardsCamera = normalize(towardsCamera);
+    vec3 worldNormal = normalize(normalMatrix * vertexNormal);
+
+    // use a function call instead of the loop
+    vec3 radiance = getRadiance(worldNormal, towardsCamera);
+
     interpolatedColor = vec4(radiance, 1);;
 
 #if 0 // debug

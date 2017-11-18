@@ -163,7 +163,6 @@ const void RegularMesh::renderTriangleStrip(const int j) const
     //
     // Copy your previous (PA06) solution here.
     //
-    // the total amount of triangle indices in the i direction
     int nIndicesInStrip = (nI + wrapI) * 2;
     // byte offset from the start of the glElementArray
     int byteOffset = j * (sizeof(vertexIndices[0]) * nIndicesInStrip);
@@ -244,7 +243,6 @@ const void RegularMesh::createFaceNormalsAndCentroids(void)
     //
     // Copy your previous (PA06) solution here.
     //
-    // get all of the faces in the ni and nj direction and multiply by two
     int iFaces = nI + wrapI - 1;
     int jFaces = nJ + wrapJ - 1;
 
