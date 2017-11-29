@@ -36,7 +36,12 @@ class RegularMesh : public Mesh
         //
         // Copy your previous (PA06) solution here.
         //
-        return -1; // replace with the correct expression
+        int index = 2 * (j * (nI + wrapI - 1) + i);
+
+        if(isUL)
+          index++;
+
+        return index; // replace with the correct expression
     };
 
     // A regular mesh vertex has this many (at most) incident vertices.
@@ -56,7 +61,7 @@ class RegularMesh : public Mesh
         //
         // Copy your previous (PA06) solution here.
         //
-        return 0; // replace (permits template to compile cleanly)
+        return j * nI + i;; // replace (permits template to compile cleanly)
     };
 
 public:

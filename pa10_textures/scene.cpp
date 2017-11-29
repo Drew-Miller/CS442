@@ -50,7 +50,10 @@ const double Scene::cameraSpeed(void) const
     //
     // Copy your previous (PA09) solution here.
     //
-    return 0.0; // replace (permits template to compile cleanly)
+    if(cars == NULL)
+      return 0.0;
+
+    return cars[0]->speed(track); // replace (permits template to compile cleanly)
 }
 
 
@@ -133,20 +136,63 @@ Scene::Scene(const Layout layout, const string skyBoxFname)
             "UniformColorShaderProgram");
     eadsShaderProgram = new EadsShaderProgram();
 
-    //
-    // ASSIGNMENT (PA10)
-    //
-    // Delete the next two lines (which keep the unmodified template
-    // from crashing).
-    //
-    uniformColorShaderProgram = NULL;
-    eadsShaderProgram = NULL;
-
     coordinateAxes = new CoordinateAxes();
 
     //
     // Modify your previous (PA08) solution to instance an SkyBox
     // with `extent` and `skyBoxFname` and add it to the scene.
     //
-}
 
+    // set extent
+    int extent_ = 32;
+    camera.setExtent((double) extent_);
+
+    // Add Lights
+    addLight(new Light(whiteColor, Vector3(0, 0, -1)));
+    addLight(new Light(.50 * whiteColor, Vector3(0, 1, 0)));
+
+    // - use extent_ with ground
+    // - have to set a track object for use in car and camera
+    //    instead of adding it to the scene directly as prior.
+    Ground *g = new Ground((double) extent_);
+    Track *t = new Track(layout, g);
+
+    // add the skybox
+    SkyBox *s = new SkyBox(extent_, skyBoxFname);
+
+    if(track == NULL)
+      track = t;
+
+    // add the scene objects
+    addSceneObject(t);
+    addSceneObject(g);
+    addSceneObject(s);
+
+    // add the teapot if the layout is not Layout_Trig
+    if(layout != LAYOUT_TRIG)
+      addSceneObject(new Teapot());
+
+    // allocate the cars to an array of pointers to cars
+    cars = new Car *[nCars];
+
+    // hardcoded color values for control over car color
+    int nColors = 4;
+    Rgb *colors = new Rgb[nColors];
+    colors[0] = Rgb(0, .105, .597);
+    colors[1] = Rgb(0, .797, .398);
+    colors[2] = Rgb(.398, 0, .996);
+    colors[3] = Rgb(1.0, 0, 1.0);
+
+    // create cars to the amount specified by the program
+    for(int i = 0; i < nCars; i++){
+      // get the initial u and color of the car
+      double u = (double) i / (double) nCars;
+      // add the car to the scene
+      cars[i] = new Car(colors[i % nColors], u, t->guideCurve);
+      addSceneObject(cars[i]);
+    }
+
+    camera.setPath(t->guideCurve);
+
+    delete[] colors;
+}

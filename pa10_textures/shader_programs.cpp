@@ -462,6 +462,15 @@ UniformColorShaderProgram::UniformColorShaderProgram(string name)
     //
     // Copy your previous (PA02) solution here.
     //
+    char *fileContents;
+
+    fileContents = readFile("uniform_color_vertex_shader.glsl");
+    compileVertexShader(fileContents);
+    free(fileContents);
+
+    fileContents = readFile("passthru_fragment_shader.glsl");
+    compileFragmentShader(fileContents);
+    free(fileContents);
 }
 
 
@@ -497,6 +506,15 @@ EadsShaderProgram::EadsShaderProgram(void)
     // - Read the fragment shader code from "eads_fragment_shader.glsl"
     //   instead of "passthru_fragment_shader.glsl".
     //
+    char *fileContents;
+
+    fileContents = readFile("eads_vertex_shader.glsl");
+    compileVertexShader(fileContents);
+    free(fileContents);
+
+    fileContents = readFile("eads_fragment_shader.glsl");
+    compileFragmentShader(fileContents);
+    free(fileContents);
 }
 
 
@@ -546,6 +564,27 @@ const void EadsShaderProgram::start(void) const
     //
     // Copy your previous (PA06) solution here.
     //
+    int nLights = scene->lights.size();
+    assert(nLights <= 10);
+
+    // set nLights
+    setUniform("nLights", nLights);
+    string indices[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+
+    for(int i = 0; i < nLights; i++){
+      // create variable names for setting values
+      string irradianceVar = "light[" + indices[i] + "].irradiance";
+      string towardsVar = "light[" + indices[i] + "].towards";
+
+      // set the components of each light
+      if(controller.lightHedgehogIndex == LIGHT_HEDGEHOG_DISABLED ||
+          i == controller.lightHedgehogIndex)
+        setUniform(irradianceVar, scene->lights[i]->irradiance);
+      else
+        setUniform(irradianceVar, blackColor);
+
+      setUniform(towardsVar, scene->lights[i]->towards());
+    }
 }
 
 
@@ -594,5 +633,3 @@ const void TexturedShaderProgram::start(void) const
 
     enableTexture(controller.useTextures);
 }
-
-

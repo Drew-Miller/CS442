@@ -74,6 +74,47 @@ void Track::addSupports(const double maxHeight, const Ground *ground)
     //
     // Copy your previous (PA09) solution here.
     //
+    double dSTie = tieSeparation();
+    double dSSupport = supportSeparation();
+    int nU;
+    double dU = integrationStep(nU);
+
+    double s = 0.0;
+    double sNextTie = 0.0;
+    double sNextSupport = 0.0;
+
+    // create all of the ties
+    for(int i = 0; i < nU - 1; i++){
+      // find u around the loop
+      double u = (double)i * dU;
+
+      if(s >= sNextTie){
+        if(s >= sNextSupport){
+          // use the guide curve to get the current location given u
+          Point3 top = (*guideCurve)(u, NULL);
+          Point3 bottom(top.u.g.x, top.u.g.y, ground->height(top.u.g.x, top.u.g.y));
+
+          // get the never parallel vector
+          Vector3 neverParallel(1, 0, 0);
+
+          // create the line segment
+          LineSegment *segment = new LineSegment(bottom, top, neverParallel);
+
+          // get ni and nj
+          int nJMax = 10;
+          int nj = max(2.0, round(top.u.g.z * nJMax / maxHeight) );
+          int ni = nTheta; // nTheta is sides for all Tubes used for track
+
+          supportTubes.push_back(new Tube(segment, radius, ni, nj, false));
+
+          sNextSupport += dSSupport;
+        }
+
+        sNextTie += dSTie;
+      }
+
+      s += guideCurve->dS(u, dU);
+    }
 }
 
 
@@ -82,6 +123,38 @@ void Track::addTies()
     //
     // Copy your previous (PA09) solution here.
     //
+    double dSTie = tieSeparation();
+    int nU;
+    double dU = integrationStep(nU);
+
+    double s = 0.0;
+    double sNextTie = 0.0;
+
+    // create all of the ties
+    for(int i = 0; i < nU - 1; i++){
+      // find u around the loop
+      double u = (double)i * dU;
+
+      if(s >= sNextTie){
+        Point3 l = (*leftRailCurve)(u, NULL);
+        Point3 r = (*rightRailCurve)(u, NULL);
+
+        // I am going to assume the left and right rail will
+        // not be directly above each other, so this Vector3
+        // works for the neverparallel
+        Vector3 neverParallel(0, 0, 1);
+        LineSegment *segment = new LineSegment(l, r, neverParallel);
+
+        int ni = nTheta;
+        int nj = 4;
+
+        tieTubes.push_back(new Tube(segment, radius, ni, nj, false));
+
+        sNextTie += dSTie;
+      }
+
+      s += guideCurve->dS(u, dU);
+    }
 }
 
 
@@ -172,6 +245,38 @@ void Track::setGuideCurve(const Layout layout)
     //
     // Copy your previous (PA07) solution here.
     //
+    switch (layout) {
+
+    case LAYOUT_BSPLINE:
+        {
+        vector<Point3> cvs_ = readPoint3s("track_bspline_cvs.csv");
+        guideCurve = new BSplineCurve(cvs_, true, vZ);
+        }
+        break;
+
+    case LAYOUT_PLANAR_CIRCLE:
+        {
+        //
+        // This is a circle of radius 1.0 which is 0.2 NDC units off
+        // the ground. These parameters are distinct from those used
+        // for the trig layout.
+        //
+        const Vec3       mag( 1.0,  1.0,  0.0);
+        const Vec3      freq( 1.0, -1.0,  0.0);
+        const Point3  offset( 0.0,  0.0,  0.2);
+        const Vec3     phase( 0.0,  0.25, 0.0);
+        guideCurve = new TrigonometricCurve(mag, freq, phase, offset, vZ);
+        }
+        break;
+
+    case LAYOUT_TRIG:
+        guideCurve = new TrigonometricCurve(mag, freq, phase, offset, vZ);
+        break;
+
+    default:
+        // should not be reached (bad track numbers should be caught in main())
+        assert(false);
+    }
 }
 
 
@@ -180,7 +285,12 @@ const double Track::speed(double u) const
     //
     // Copy your previous (PA09) solution here
     //
-    return 0.0; // replace (permits template to compile cleanly)
+    Point3 p = (*guideCurve)(u, NULL, NULL);
+    double dz = guideCurve->zMax() - p.u.g.z;
+
+    double speed = sqrt(speedAtTop * speedAtTop + 2 * gravAccel * dz);
+
+    return speed;
 }
 
 
@@ -190,6 +300,29 @@ Track::Track(const Layout layout, const Ground *ground)
     //
     // Copy your previous (PA09) solution here.
     //
+    Vector3 uDirection(1, 0, 0);
+    Vector3 neverParallel(0, 0, 1);
+
+    Vector3 leftOffset = (0.5 * railSep) * uDirection;
+    Vector3 rightOffset = (-0.5 * railSep) * uDirection;
+
+    setGuideCurve(layout);
+
+    zMax = guideCurve->zMax();
+    guideCurve->enableDynamicFrame();
+
+    leftRailCurve = new OffsetCurve( guideCurve, leftOffset, neverParallel );
+    rightRailCurve = new OffsetCurve( guideCurve, rightOffset, neverParallel );
+
+    // get nRailSegments
+    int nRailSegments = guideCurve->length() / approxRailSegmentLength;
+
+    leftRailTube = new Tube(leftRailCurve, radius, nTheta, nRailSegments, true);
+    rightRailTube = new Tube(rightRailCurve, radius, nTheta, nRailSegments, true);
+
+    double maxSupportHeight = mag.u.g.z * 2.0 + offset.u.g.z;
+
+    addSupports(maxSupportHeight, ground);
 }
 
 
@@ -258,4 +391,3 @@ extern const bool parseLayout(const string tag, Layout &layout)
     }
     return false;
 }
-

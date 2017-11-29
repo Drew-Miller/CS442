@@ -103,7 +103,55 @@ vec3 getTexturedRadiance(vec3 worldNormal, vec3 towardsCamera)
 //   realism that will be explained in lecture.
 //
 {
-    return light[0].irradiance; // replace this with the correct expression
+    vec3 radiance;
+
+    if(useTextures){
+      vec3 textureRgb = imageTexture(interpolatedTextureCoordinates);
+      radiance = textureRgb * emittanceTextureWeight;
+    }
+    else
+      radiance = emittance;
+
+
+
+    for(int i = 0; i < nLights; i++){
+
+      vec3 reflectivity;
+      vec3 towardsLight = light[i].towards;
+      vec3 irradiance = light[i].irradiance;
+
+      if(useTextures)
+        reflectivity = ambientTextureWeight * textureRgb;
+      else
+        reflectivity = ambientReflectivity;
+
+      // get the normal vec for the world and the light s.t. we can determine
+      // the camera vec
+      vec3 towardsLight_ = normalize(towardsLight);
+
+      float nDotL = dot(worldNormal, towardsLight_);
+
+      if(nDotL > 0.0){
+        
+        if(useTextures)
+          reflectivity += (diffuseTextureWeight * textureRgb * nDotL);
+        else
+          reflectivity += (nDotL * maximumDiffuseReflectivity);
+
+        vec3 h = normalize(towardsCamera + towardsLight_);
+
+        float nDotH = dot(worldNormal, h);
+
+        if(nDotH > 0.0){
+          reflectivity += (maximumSpecularReflectivity * pow(nDotH, specularExponent));
+        }
+      }
+
+      // add the reflectivity from that light source
+      radiance += (irradiance * reflectivity);
+    }
+
+    return radiance;
 }
 
 void main(void)

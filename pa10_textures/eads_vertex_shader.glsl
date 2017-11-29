@@ -73,7 +73,37 @@ vec3 getRadiance(vec3 worldNormal, vec3 towardsCamera)
 // Copy your previous (PA09) solution here.
 //
 {
-    return vec3(0,0,0); // to be replaced
+  vec3 radiance = emittance;
+
+  for(int i = 0; i < nLights; i++){
+
+    vec3 reflectivity = ambientReflectivity;
+    vec3 towardsLight = light[i].towards;
+    vec3 irradiance = light[i].irradiance;
+
+    // get the normal vec for the world and the light s.t. we can determine
+    // the camera vec
+    vec3 towardsLight_ = normalize(towardsLight);
+
+    float nDotL = dot(worldNormal, towardsLight_);
+
+    if(nDotL > 0.0){
+      reflectivity += (nDotL * maximumDiffuseReflectivity);
+
+      vec3 h = normalize(towardsCamera + towardsLight_);
+
+      float nDotH = dot(worldNormal, h);
+
+      if(nDotH > 0.0){
+        reflectivity += (maximumSpecularReflectivity * pow(nDotH, specularExponent));
+      }
+    }
+
+    // add the reflectivity from that light source
+    radiance += (irradiance * reflectivity);
+  }
+
+  return radiance; // to be replaced
 }
 
 void main(void)
@@ -91,11 +121,37 @@ void main(void)
     // `interpolatedTowardsCamera` to `towardsCamera`.
     //
 
-    interpolatedColor = vec4(radiance, 1);
+    vec4 worldPosition4 = worldMatrix * vertexPosition;
+
+    // set the 'towardsCamera' value
+    vec3 towardsCamera;
+
+    if(useOrthographic == 1)
+      towardsCamera = orthographicTowards;
+    else{
+      // get the convert the vec4 worldPosition to vec3
+      vec3 worldPosition3 = vec3(worldPosition4.xyz);
+      towardsCamera = cameraPosition - worldPosition3;
+    }
+
+    // normalize
+    towardsCamera = normalize(towardsCamera);
+    vec3 worldNormal = normalize(normalMatrix * vertexNormal);
+
+    // use a function call instead of the loop
+    if(useGouraudShading)
+      vec3 radiance = getRadiance(worldNormal, towardsCamera);
+    else{
+      interpolatedWorldNormal = worldNormal;
+      interpolatedTowardsCamera = towardsCamera;
+    }
+
+
+    interpolatedColor = vec4(radiance, 1);;
+
 #if 0 // debug
     interpolatedColor = vec4(vertexNormal, 1);
 #endif
-    interpolatedTextureCoordinates = textureCoordinates;
 
     // the position transform is trivial
     gl_Position = modelViewProjectionMatrix * vertexPosition;

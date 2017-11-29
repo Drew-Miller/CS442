@@ -86,7 +86,21 @@ const double Curve::zMax(void) const
     //
     // Copy your previous (PA09) solution here.
     //
-    return 0.0; // replace (permits template to compile cleanly)
+    int steps = 1000;
+    double zMax = 0.0;
+    Point3 p;
+    double u = 0.0;
+
+    // find z max along the curve
+    for(int i = 0; i < steps; i++){
+        u = (double)i / steps;
+        p = (*this)(u, NULL);
+
+        if(p.u.g.z > zMax)
+          zMax = p.u.g.z;
+    }
+
+    return zMax; // replace (permits template to compile cleanly)
 }
 
 
@@ -161,7 +175,45 @@ const Transform Curve::coordinateFrame(const double u) const
     //
     // Copy your previous (PA09) solution here.
     //
-    return Transform(); // replace (permits template to compile cleanly)
+    Vector3 neverParallel;
+
+    if(frameIsDynamic){
+        Vector3 g = Vector3(0.0, 0.0, -1 * gravAccel);
+
+        Vector3 dp_du, d2p_du2;
+
+        (*this)(u, &dp_du, &d2p_du2);
+
+        double speed = scene->track->speed(u);
+
+        double ds_du = dp_du.mag();
+
+        Vector3 c = d2p_du2 * pow((speed / ds_du), 2);
+
+        neverParallel = c - g;
+    }
+    else {
+        neverParallel = vNeverParallel;
+    }
+
+    // get dp_du from the constructor
+    Vector3 tangent;
+    // get the point and the tangent vector from the curve
+    Point3 p = (*this)(u, &tangent);
+
+    // get vW and normalize it
+    Vector3 vW = tangent.normalized();
+    Vector3 vU = tangent.cross(neverParallel).normalized();
+    Vector3 vV = vU.cross(vW).normalized();
+
+    // pass in the values into the transform matrix
+    Transform transform = Transform(vU.u.g.x, vW.u.g.x, vV.u.g.x, p.u.g.x,
+                                    vU.u.g.y, vW.u.g.y, vV.u.g.y, p.u.g.y,
+                                    vU.u.g.z, vW.u.g.z, vV.u.g.z, p.u.g.z,
+                                    0.0,      0.0,      0.0,      1.0);
+                                    // 0 for vectors, 1 for points
+
+    return transform; // replace (permits template to compile cleanly)
 }
 
 
@@ -210,6 +262,35 @@ const Point3 TrigonometricCurve::operator()(const double u, Vector3 *dp_du,
     //
     // Copy your previous (PA09) solution here.
     //
-    return Point3(); // replace (permits template to compile cleanly)
-}
+    Vec3 a = 2 * M_PI * (freq * u + phase);
 
+    // Null Check
+    if(dp_du){
+    // Derivative: p = x * cos(2 * PI * (frequency * u + phase));
+    //            dp/du = x * 2 * PI * frequency * -sin(2 * PI * (frequency * u + phase));
+    //         OR dp/du = x * 2 * PI * frequency * -sin(a.u.g.x), a = 2 * PI * (frequency * u + phase)
+    //            substitute variables as needed for x,y,z
+      Vec3 iSin(-sin(a.u.g.x), -sin(a.u.g.y), -sin(a.u.g.z));
+
+      dp_du->u.g.x = mag.u.g.x * iSin.u.g.x * freq.u.g.x * 2 * M_PI;
+      dp_du->u.g.y = mag.u.g.y * iSin.u.g.y * freq.u.g.y * 2 * M_PI;
+      dp_du->u.g.z = mag.u.g.z * iSin.u.g.z * freq.u.g.z * 2 * M_PI;
+    }
+    // second derivative
+    if(d2p_du2){
+      double pi2 = M_PI * M_PI;
+
+      Vec3 iCos(-cos(a.u.g.x), -cos(a.u.g.y), -cos(a.u.g.z));
+
+      d2p_du2->u.g.x = mag.u.g.x * iCos.u.g.x * freq.u.g.x * freq.u.g.x * 4 * pi2;
+      d2p_du2->u.g.y = mag.u.g.y * iCos.u.g.y * freq.u.g.y * freq.u.g.y * 4 * pi2;
+      d2p_du2->u.g.z = mag.u.g.z * iCos.u.g.z * freq.u.g.z * freq.u.g.z * 4 * pi2;
+    }
+
+
+    double x = mag.u.g.x * cos(a.u.g.x) + offset.u.g.x;
+    double y = mag.u.g.y * cos(a.u.g.y) + offset.u.g.y;
+    double z = mag.u.g.z * cos(a.u.g.z) + offset.u.g.z;
+
+    return Point3(x, y, z);
+}
