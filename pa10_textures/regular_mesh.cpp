@@ -3,7 +3,6 @@
 #include "render_stats.h"
 #include "regular_mesh.h"
 
-
 void RegularMesh::allocateBuffers(void)
 {
     //
@@ -54,6 +53,7 @@ void RegularMesh::updateBuffers(void)
 
     if(textureCoordinates){
       CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBufferId));
+      // there are nVertices of these
       CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(textureCoordinates[0]) * nVertices,
           textureCoordinates, GL_STATIC_DRAW));
     }
@@ -200,16 +200,19 @@ const void RegularMesh::render(void)
     }
 
     if(textureCoordinates){
-      CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER,textureCoordinatesBufferId));
-      GLint textureCoordinatesAttributeIndex = ShaderProgram::getCurrentAttributeIndex("textureCoordinates");
-      CHECK_GL(glEnableVertexAttribArray(textureCoordinatesAttributeIndex));
-      CHECK_GL(glVertexAttribPointer(
-                   textureCoordinatesAttributeIndex, // index of attribute
-                   2, // # of elements per attribute
-                   GL_DOUBLE, // type of each component
-                   GL_FALSE,  // don't normalized fixed-point values
-                   0, // offset between consecutive generic vertex attributes
-                   BUFFER_OFFSET(0)));
+      GLint tcai = ShaderProgram::getCurrentAttributeIndex("textureCoordinates");
+
+      if(tcai != NO_SUCH_ATTRIBUTE){
+        CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBufferId));
+        CHECK_GL(glEnableVertexAttribArray(tcai));
+        CHECK_GL(glVertexAttribPointer(
+                     tcai, // index of attribute
+                     2, // # of elements per attribute
+                     GL_DOUBLE, // type of each component
+                     GL_FALSE,  // don't normalized fixed-point values
+                     0, // offset between consecutive generic vertex attributes
+                     BUFFER_OFFSET(0)));
+      }
     }
 
     CHECK_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId));

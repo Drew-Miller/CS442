@@ -14,5 +14,7 @@ const Point3 Rectangle::operator()(const double u, const double v,
     //
     // 3 lines in instructor solution (YMMV)
     //
-    return Point3(); // replace (permits template to compile cleanly)
+    tangentU = vU;
+    tangentV = vV;
+    return pLL + (u * vU) + (v * vV); // replace (permits template to compile cleanly)
 }

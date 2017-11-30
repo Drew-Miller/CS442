@@ -121,6 +121,7 @@ void main(void)
     // `interpolatedTowardsCamera` to `towardsCamera`.
     //
 
+    vec3 radiance;
     vec4 worldPosition4 = worldMatrix * vertexPosition;
 
     // set the 'towardsCamera' value
@@ -140,12 +141,16 @@ void main(void)
 
     // use a function call instead of the loop
     if(useGouraudShading)
-      vec3 radiance = getRadiance(worldNormal, towardsCamera);
+        radiance = getRadiance(worldNormal, towardsCamera);
     else{
+      // didn't specifcally ask for to be set but to get the texture coordinates set
+      // to the fragment shader assign here
+      // These come from the render calls in the regular mesh
+      interpolatedTextureCoordinates = textureCoordinates;
+
       interpolatedWorldNormal = worldNormal;
       interpolatedTowardsCamera = towardsCamera;
     }
-
 
     interpolatedColor = vec4(radiance, 1);;
 

@@ -104,9 +104,11 @@ vec3 getTexturedRadiance(vec3 worldNormal, vec3 towardsCamera)
 //
 {
     vec3 radiance;
+    vec3 textureRgb;
 
     if(useTextures){
-      vec3 textureRgb = imageTexture(interpolatedTextureCoordinates);
+      // where we use the set textureCoordinates
+      textureRgb = texture(imageTexture, interpolatedTextureCoordinates).rgb;
       radiance = textureRgb * emittanceTextureWeight;
     }
     else
@@ -132,7 +134,7 @@ vec3 getTexturedRadiance(vec3 worldNormal, vec3 towardsCamera)
       float nDotL = dot(worldNormal, towardsLight_);
 
       if(nDotL > 0.0){
-        
+
         if(useTextures)
           reflectivity += (diffuseTextureWeight * textureRgb * nDotL);
         else
