@@ -51,6 +51,8 @@ int main(int argc, char **argv)
     int ch;
     string skyBoxFname = DEFAULT_SKY_BOX;
     int status;
+    // PA11 - track.h
+    // Layout layout = LAYOUT_BSPLINE; // the default
     Layout layout = LAYOUT_BSPLINE; // the default
 
     while ((ch = getopt(argc, argv, "c:l:s:h")) != -1) {
