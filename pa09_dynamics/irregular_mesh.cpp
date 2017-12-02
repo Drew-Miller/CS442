@@ -8,6 +8,7 @@
 #include "render_stats.h"
 #include "shader_programs.h"
 
+#include <iostream>
 
 // helper (could be static)
 void fitInBbox(Point3 *p, const int nP,
@@ -18,6 +19,8 @@ void fitInBbox(Point3 *p, const int nP,
 //
 {
     Point3 pMin, pMax;
+
+    cout << "fitInBox P:" << *p << " NP:" << nP << " qMin:" << qMin << " qMax:" << qMax << endl;
 
     assert(nP > 0);
     pMin = pMax = p[0];
@@ -261,5 +264,5 @@ void IrregularMesh::updateBuffers(void)
     CHECK_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(faceNormalOfVertex[0]) * nVertices,
     faceNormalOfVertex, GL_STATIC_DRAW));
 
-    delete faceNormalOfVertex;
+    delete[] faceNormalOfVertex;
 }
