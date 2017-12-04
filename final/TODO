@@ -1,0 +1,6 @@
+- figure out where in gl does the scene step function get called
+
+- inherit rocket ship from car or create its own class
+    * if inherited change the file being read for the object
+    * if not, add rockets to the scene as a member variable and update them in
+      scene:step
