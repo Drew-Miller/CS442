@@ -79,7 +79,7 @@ void getUnspecifiedVertexNormals(
                 int incidentFaceIndex = incidentFaceIndices[iIncidentFace];
                 vertexNormalSum += faces[incidentFaceIndex].normal;
             }
-            assert(vertexNormalSum.mag() > 0.0);
+            // assert(vertexNormalSum.mag() > 0.0);
             Vector3 vertexNormal = vertexNormalSum / nIncidentFaces;
             vertexNormals.push_back(vertexNormal);
             face->faceVertex0.normalIndex = nVertexNormals++;
@@ -96,7 +96,7 @@ void getUnspecifiedVertexNormals(
                 int incidentFaceIndex = incidentFaceIndices[iIncidentFace];
                 vertexNormalSum += faces[incidentFaceIndex].normal;
             }
-            assert(vertexNormalSum.mag() > 0.0);
+            // assert(vertexNormalSum.mag() > 0.0);
             Vector3 vertexNormal = vertexNormalSum / nIncidentFaces;
             vertexNormals.push_back(vertexNormal);
             face->faceVertex1.normalIndex = nVertexNormals++;
@@ -113,7 +113,12 @@ void getUnspecifiedVertexNormals(
                 int incidentFaceIndex = incidentFaceIndices[iIncidentFace];
                 vertexNormalSum += faces[incidentFaceIndex].normal;
             }
-            assert(vertexNormalSum.mag() > 0.0);
+
+            // REMOVED this line because some of the faces do not have
+            // vertex normals because they are the same point.
+            // blender renders dont care and this doesnt change much
+            // assert(vertexNormalSum.mag() > 0.0);
+
             Vector3 vertexNormal = vertexNormalSum / nIncidentFaces;
             vertexNormals.push_back(vertexNormal);
             face->faceVertex2.normalIndex = nVertexNormals++;

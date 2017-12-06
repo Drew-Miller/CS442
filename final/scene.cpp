@@ -6,6 +6,7 @@
 #include "color.h"
 #include "controller.h"
 #include "curve.h"
+#include "death_star.h"
 #include "n_elem.h"
 #include "render_stats.h"
 #include "rocket.h"
@@ -155,42 +156,32 @@ Scene::Scene(const Layout layout)
     addLight(new Light(whiteColor, Vector3(0, 0, -1)));
     addLight(new Light(.50 * whiteColor, Vector3(0, 1, 0)));
 
-    // - use extent_ with ground
-    // - have to set a track object for use in car and camera
-    //    instead of adding it to the scene directly as prior.
+    // add the ground to the scene
     Ground *g = new Ground((double) extent_);
-    Track *t = new Track(layout, g);
+    // addSceneObject(g);
 
+    // add the track to the scene
+    Track *t = new Track(layout, g);
     if(track == NULL)
       track = t;
-
-    // add the scene objects
     addSceneObject(t);
-    addSceneObject(g);
 
     // add the teapot if the layout is not Layout_Trig
-    if(layout != LAYOUT_TRIG)
-      addSceneObject(new Teapot());
+    if(layout != LAYOUT_TRIG){
+      addSceneObject(new DeathStar());
+    }
 
 
     // hardcoded color values for control over car color
-    int nColors = 4;
-    Rgb *colors = new Rgb[nColors];
-    colors[0] = Rgb(0, .105, .597);
-    colors[1] = Rgb(0, .797, .398);
-    colors[2] = Rgb(.398, 0, .996);
-    colors[3] = Rgb(1.0, 0, 1.0);
+    Rgb color = Rgb(0.75, 0.75, 0.75);
 
     cars = new Car *[nCars];
 
     for(int i = 0; i < nCars; i++){
       double u = (double)i / (double)nCars;
-      cars[i] = new Car(colors[i % nColors], u, t->guideCurve);
+      cars[i] = new Car(color, u, t->guideCurve);
       addSceneObject(cars[i]);
     }
-
-    delete[] colors;
-
 
     camera.setPath(t->guideCurve);
 }

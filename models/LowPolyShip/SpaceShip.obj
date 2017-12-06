@@ -1,7 +1,7 @@
 # Blender v2.65 (sub 0) OBJ File: 'SpaceShip.blend'
 # www.blender.org
-mtllib SpaceShip.mtl
-o Cube
+# mtllib SpaceShip.mtl
+# o Cube
 v 0.650832 0.271315 -1.000000
 v 1.240349 -0.000333 1.000000
 v 0.650832 0.315481 -1.000000
@@ -122,9 +122,9 @@ v 0.000000 0.948491 1.700656
 v 0.000000 -0.000333 2.156063
 v -1.125746 0.180615 1.542580
 v -1.125746 -0.000333 1.866080
-g Cube_Cube_Base
-usemtl Base
-s off
+# g Cube_Cube_Base
+# usemtl Base
+# s off
 f 15 2 56 77
 f 49 48 12 21
 f 17 15 19 20
@@ -235,8 +235,8 @@ f 55 120 119 59
 f 63 111 115 119
 f 56 118 120 55
 f 71 116 117 72
-g Cube_Cube_Black
-usemtl Black
+# g Cube_Cube_Black
+# usemtl Black
 f 51 117 75 14
 f 113 47 14 75
 f 47 50 51 14

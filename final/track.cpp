@@ -216,12 +216,12 @@ void Track::display(const Transform &viewProjectionTransform,
         worldTransform.getNormalTransform());
 
     // set support attributes
-    Rgb redRgb(1.0, 0.1, 0.1);
+    Rgb trackRgb(0.39, 0.00, 0.39);
     Rgb whiteRgb(1.0, 1.0, 1.0);
 
     scene->eadsShaderProgram->setEmittance(blackColor);
-    scene->eadsShaderProgram->setDiffuse(0.4 * redRgb);
-    scene->eadsShaderProgram->setAmbient(0.4 * redRgb);
+    scene->eadsShaderProgram->setDiffuse(0.4 * trackRgb);
+    scene->eadsShaderProgram->setAmbient(0.4 * trackRgb);
     scene->eadsShaderProgram->setSpecular(0.4 * whiteRgb, 40.0);
     scene->eadsShaderProgram->start();
 
@@ -231,8 +231,8 @@ void Track::display(const Transform &viewProjectionTransform,
 
     // set tie attributes
     scene->eadsShaderProgram->setEmittance(blackColor);
-    scene->eadsShaderProgram->setDiffuse(0.4 * redRgb);
-    scene->eadsShaderProgram->setAmbient(0.4 * redRgb);
+    scene->eadsShaderProgram->setDiffuse(0.4 * trackRgb);
+    scene->eadsShaderProgram->setAmbient(0.4 * trackRgb);
     scene->eadsShaderProgram->setSpecular(0.4 * whiteRgb, 40.0);
     scene->eadsShaderProgram->start();
 
@@ -244,7 +244,12 @@ void Track::display(const Transform &viewProjectionTransform,
 
     // Here are some reflectance choices for metallic-looking
     // rails. Pick one (or make up your own):
-#  if   1 // chrome
+#  if 1 // CUSTOM
+    const Rgb kAmbient(0.1, 0.1, 0.1);
+    const Rgb kDiffuse(0.1, 0.1, 0.1);
+    const Rgb kSpecular(0.1, 0.1, 0.1);
+    const double expoSpecular = 27.8974;
+#  elif   0 // chrome
     const Rgb kAmbient(0.25, 0.25,   0.25);
     const Rgb kDiffuse(0.4,  0.4,  0.4);
     const Rgb kSpecular(0.75, 0.75, 0.75);
@@ -288,6 +293,13 @@ void Track::setGuideCurve(const Layout layout)
     case LAYOUT_BSPLINE:
         {
         vector<Point3> cvs_ = readPoint3s("track_bspline_cvs.csv");
+        guideCurve = new BSplineCurve(cvs_, true, vZ);
+        }
+        break;
+
+    case LAYOUT_CUSTOM:
+        {
+        vector<Point3> cvs_ = readPoint3s("track_custom_cvs.csv");
         guideCurve = new BSplineCurve(cvs_, true, vZ);
         }
         break;
@@ -338,7 +350,8 @@ const double Track::speed(double u) const
     Point3 p = (*guideCurve)(u, NULL, NULL);
     double dz = guideCurve->zMax() - p.u.g.z;
 
-    double speed = sqrt(speedAtTop * speedAtTop + 2 * gravAccel * dz);
+    // Changed Speed here
+    double speed = sqrt(speedAtTop * speedAtTop + 2 * gravAccel * dz) * 1.2 + 0.7;
 
     return speed; // replace (permits template to compile cleanly)
 }
@@ -385,10 +398,6 @@ Track::Track(const Layout layout, const Ground *ground)
 
     leftRailTube = new Tube(leftRailCurve, radius, nTheta, nRailSegments, true);
     rightRailTube = new Tube(rightRailCurve, radius, nTheta, nRailSegments, true);
-
-    double maxSupportHeight = mag.u.g.z * 2.0 + offset.u.g.z;
-
-    addSupports(maxSupportHeight, ground);
 }
 
 

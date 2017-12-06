@@ -45,7 +45,8 @@ int main(int argc, char **argv)
 {
     int ch;
     int status;
-    Layout layout = LAYOUT_BSPLINE; // the default
+    // Layout layout = LAYOUT_BSPLINE; // the default
+    Layout layout = LAYOUT_CUSTOM;
 
     while ((ch = getopt(argc, argv, "c:l:h")) != -1) {
         switch (ch) {

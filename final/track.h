@@ -12,6 +12,7 @@ using namespace std;
 #include "tube.h"
 
 typedef enum {
+    LAYOUT_CUSTOM,
     LAYOUT_BSPLINE,            // default (after bsplines defined)
     LAYOUT_PLANAR_CIRCLE,      // mainly to validate banking computation
     LAYOUT_TRIG,               // the original figure-8 trigonometric curve

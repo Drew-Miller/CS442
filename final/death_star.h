@@ -13,7 +13,7 @@ using namespace std;
 #include "shader_programs.h"
 #include "surface.h"
 
-#define DEATH_STAR_FNAME "death_star.obj"
+#define DEATH_STAR_FNAME "rocket.obj"
 
 class DeathStar : public SceneObject
 //

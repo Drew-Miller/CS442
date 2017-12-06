@@ -16,7 +16,7 @@ using namespace std;
 
 extern string carFname; // name of the file containing the car model
 
-// #define DEFAULT_CAR_FNAME "car.obj"
+#define DEFAULT_CAR_FNAME "car.obj"
 #define ROCKET_CAR_FNAME "rocket.obj"
 
 class Car : public SceneObject

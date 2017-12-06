@@ -58,7 +58,8 @@ void Car::display(const Transform &viewProjectionTransform,
       // so I played around and discovered:
       // x: roll, y: pitch, z: yaw
       // and use those to orientate my cars
-      modelTransform.rotate(M_PI / 2, Vector3(0.0, 0.0, 1.0));
+      modelTransform.rotate(3 * M_PI / 2, Vector3(1.0, 0.0, 0.0));
+      modelTransform.rotate(M_PI, Vector3(0.0, 0.0, 1.0));
     }
 
     if (scene->eadsShaderProgram) { // will be NULL in the template
