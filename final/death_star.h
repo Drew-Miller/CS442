@@ -13,21 +13,20 @@ using namespace std;
 #include "shader_programs.h"
 #include "surface.h"
 
-#define DEATH_STAR_FNAME "rocket.obj"
+extern string dsFname; // name of the file containing the car model
+
+#define DEATH_STAR_FNAME "death_star_normal.obj"
+#define RUST_SPHERE_FNAME "death_star_rust.obj"
 
 class DeathStar : public SceneObject
 //
 // SceneObject representing the classic Newell teapot
 //
 {
+private:
     // A Teapot is made up of a collection of BezierPatches.
     IrregularMesh *irregularMesh;
-
-    // Each patch will be made of the same material and will get an nI
-    // x nJ tessellation.
-    static const int nI = 8;
-    static const int nJ = 8;
-    Vector3 offset; // displacement from the modeling coordinate origin
+    CoordinateAxes *coordinateAxes;
 
 public:
     DeathStar(void);

@@ -12,6 +12,8 @@ DeathStar::DeathStar(void)
           :
             irregularMesh(NULL)
 {
+  coordinateAxes = new CoordinateAxes(); // add this line
+
   // Since the car's IrregularMesh doesn't need to be tessellated
   // (effectively), we can create the hedgehogs immediately.
   irregularMesh = IrregularMesh::read(dsFname.c_str());
@@ -24,23 +26,22 @@ DeathStar::DeathStar(void)
 void DeathStar::display(const Transform &viewProjectionTransform,
                      Transform worldTransform)
 {
-    Rgb veryRedRgb(0.976, 0.051, 0.008);
+    Rgb surfaceColorRGB(0.563, 0.578, 0.589);
 
-
-    modelTransform = Transform(1.0, 0.0, 0.0, 0.0,
-                               0.0, 1.0, 0.0, 0.0,
-                               0.0, 0.0, 1.0, 0.0,
+    modelTransform = Transform(2.0, 0.0, 0.0, 0.0,
+                               0.0, 2.0, 0.0, -0.5,
+                               0.0, 0.0, 2.0, 0.0,
                                0.0, 0.0, 0.0, 1.0);
 
-    modelTransform.scale(10, 10, 10);
-    modelTransform.translate(0.0, 0.0, 0.2);
+    modelTransform.rotate(M_PI / 2, Vector3(1.0, 0.0, 0.0));
 
 
     if (scene->eadsShaderProgram) { // will be NULL in the template
         scene->eadsShaderProgram->setEmittance(blackColor);
-        scene->eadsShaderProgram->setDiffuse(0.3*veryRedRgb);
-        scene->eadsShaderProgram->setAmbient(0.3*veryRedRgb);
+        scene->eadsShaderProgram->setDiffuse(0.3*surfaceColorRGB);
+        scene->eadsShaderProgram->setAmbient(0.3*surfaceColorRGB);
         scene->eadsShaderProgram->setSpecular(Rgb(0.3, 0.3, 0.3), 30.0);
+        worldTransform *= modelTransform;
         scene->eadsShaderProgram->setModelViewProjectionMatrix(
             viewProjectionTransform * worldTransform);
         scene->eadsShaderProgram->setWorldMatrix(worldTransform);
@@ -56,4 +57,7 @@ void DeathStar::display(const Transform &viewProjectionTransform,
         displayHedgehogs(viewProjectionTransform,
             worldTransform, quillLength);
     }
+
+    if (controller.axesEnabled)
+        coordinateAxes->display(viewProjectionTransform, worldTransform);
 }

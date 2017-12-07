@@ -51,13 +51,14 @@ void Car::display(const Transform &viewProjectionTransform,
     }
     else{
       modelTransform = path->coordinateFrame(u);
-      modelTransform.scale(.125, .125, .125);
-      modelTransform.translate(0.0, 0.0, 0.2);
+      modelTransform.scale(.25, .25, .25);
+      modelTransform.translate(0.0, 0.0, 0.1);
 
       // the last two transforms got my car in a weird direction,
       // so I played around and discovered:
       // x: roll, y: pitch, z: yaw
       // and use those to orientate my cars
+      modelTransform.scale(Vector3(0.3, 0.3, 0.3));
       modelTransform.rotate(3 * M_PI / 2, Vector3(1.0, 0.0, 0.0));
       modelTransform.rotate(M_PI, Vector3(0.0, 0.0, 1.0));
     }

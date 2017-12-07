@@ -173,7 +173,7 @@ Scene::Scene(const Layout layout)
 
 
     // hardcoded color values for control over car color
-    Rgb color = Rgb(0.75, 0.75, 0.75);
+    Rgb color = Rgb(0.39, 0.00, 0.39);
 
     cars = new Car *[nCars];
 

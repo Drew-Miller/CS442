@@ -51,7 +51,7 @@ const Point3 Track::offset(0.00,  0.00, Track::mag.u.g.z + 0.20);
 const Vec3 Track::phase(-0.03,  0.69, 0.00);
 
 // radius (in world coordinates) of all Tubes used for track
-const double Track::radius = 0.005;
+const double Track::radius = 0.003;
 
 // separation of the two rails
 const double Track::railSep = 10.0 * radius;
@@ -382,8 +382,8 @@ Track::Track(const Layout layout, const Ground *ground)
     Vector3 uDirection(1, 0, 0);
     Vector3 neverParallel(0, 0, 1);
 
-    Vector3 leftOffset = (0.5 * railSep) * uDirection;
-    Vector3 rightOffset = (-0.5 * railSep) * uDirection;
+    Vector3 leftOffset = (0.4 * railSep) * uDirection;
+    Vector3 rightOffset = (-0.4 * railSep) * uDirection;
 
     setGuideCurve(layout);
 
