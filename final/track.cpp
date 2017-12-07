@@ -351,7 +351,7 @@ const double Track::speed(double u) const
     double dz = guideCurve->zMax() - p.u.g.z;
 
     // Changed Speed here
-    double speed = sqrt(speedAtTop * speedAtTop + 2 * gravAccel * dz) * 1.2 + 0.7;
+    double speed = sqrt(speedAtTop * speedAtTop + 2 * gravAccel * dz) * 1.2 + 0.2;
 
     return speed; // replace (permits template to compile cleanly)
 }
